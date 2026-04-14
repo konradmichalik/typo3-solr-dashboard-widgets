@@ -1,0 +1,31 @@
+<html data-namespace-typo3-fluid="true"
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<div class="widget-content-main">
+    <f:if condition="{connections}">
+        <f:then>
+            <ul class="list-group list-group-flush">
+                <f:for each="{connections}" as="connection">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{connection.siteLabel}</strong><br>
+                            <small class="text-muted">{connection.host}:{connection.port} / {connection.core}</small>
+                        </div>
+                        <f:if condition="{connection.reachable}">
+                            <f:then>
+                                <span class="badge bg-success">OK</span>
+                            </f:then>
+                            <f:else>
+                                <span class="badge bg-danger">Offline</span>
+                            </f:else>
+                        </f:if>
+                    </li>
+                </f:for>
+            </ul>
+        </f:then>
+        <f:else>
+            <p class="text-muted">No Solr connections configured.</p>
+        </f:else>
+    </f:if>
+</div>
+</html>
