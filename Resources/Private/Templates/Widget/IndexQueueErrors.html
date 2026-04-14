@@ -1,0 +1,44 @@
+<html data-namespace-typo3-fluid="true"
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<div class="widget-content-main">
+    <f:if condition="{errors}">
+        <f:then>
+            <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th><f:translate key="widget.indexQueueErrors.recordType" extensionName="solr_dashboard_widgets" /></th>
+                            <th><f:translate key="widget.indexQueueErrors.uid" extensionName="solr_dashboard_widgets" /></th>
+                            <th><f:translate key="widget.indexQueueErrors.error" extensionName="solr_dashboard_widgets" /></th>
+                            <th><f:translate key="widget.indexQueueErrors.timestamp" extensionName="solr_dashboard_widgets" /></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <f:for each="{errors}" as="error">
+                            <tr>
+                                <td>{error.item_type}</td>
+                                <td>{error.item_uid}</td>
+                                <td><span title="{error.errors}">{error.errors -> f:format.crop(maxCharacters: 80)}</span></td>
+                                <td><f:format.date format="d.m.Y H:i">{error.changed}</f:format.date></td>
+                            </tr>
+                        </f:for>
+                    </tbody>
+                </table>
+            </div>
+            <div class="widget-content-footer">
+                <button type="button"
+                        class="btn btn-sm btn-warning"
+                        id="solr-reset-errors"
+                        data-reset-url="/typo3/solr-dashboard-widgets/reset-errors"
+                        data-confirm-message="{f:translate(key: 'widget.indexQueueErrors.resetConfirm', extensionName: 'solr_dashboard_widgets')}">
+                    <f:translate key="widget.indexQueueErrors.resetButton" extensionName="solr_dashboard_widgets" />
+                </button>
+            </div>
+        </f:then>
+        <f:else>
+            <p class="text-muted"><f:translate key="widget.indexQueueErrors.noErrors" extensionName="solr_dashboard_widgets" /></p>
+        </f:else>
+    </f:if>
+</div>
+</html>
