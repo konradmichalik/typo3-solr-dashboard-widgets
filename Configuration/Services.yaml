@@ -1,0 +1,73 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+  KonradMichalik\SolrDashboardWidgets\:
+    resource: "../Classes/*"
+
+  KonradMichalik\SolrDashboardWidgets\Widgets\ConnectionStatusWidget:
+    tags:
+      - name: dashboard.widget
+        identifier: 'solrDashboardWidgets.connectionStatus'
+        groupNames: 'solr'
+        title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.connectionStatus.title'
+        description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.connectionStatus.description'
+        iconIdentifier: 'content-dashboard'
+        height: 'small'
+        width: 'small'
+
+  KonradMichalik\SolrDashboardWidgets\Widgets\IndexQueueStatusWidget:
+    tags:
+      - name: dashboard.widget
+        identifier: 'solrDashboardWidgets.indexQueueStatus'
+        groupNames: 'solr'
+        title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueStatus.title'
+        description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueStatus.description'
+        iconIdentifier: 'content-dashboard'
+        height: 'medium'
+        width: 'small'
+
+  KonradMichalik\SolrDashboardWidgets\Widgets\IndexQueueErrorsWidget:
+    tags:
+      - name: dashboard.widget
+        identifier: 'solrDashboardWidgets.indexQueueErrors'
+        groupNames: 'solr'
+        title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueErrors.title'
+        description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueErrors.description'
+        iconIdentifier: 'content-dashboard'
+        height: 'medium'
+        width: 'medium'
+
+  KonradMichalik\SolrDashboardWidgets\Widgets\DocumentsInIndexWidget:
+    tags:
+      - name: dashboard.widget
+        identifier: 'solrDashboardWidgets.documentsInIndex'
+        groupNames: 'solr'
+        title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.documentsInIndex.title'
+        description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.documentsInIndex.description'
+        iconIdentifier: 'content-dashboard'
+        height: 'small'
+        width: 'medium'
+
+  KonradMichalik\SolrDashboardWidgets\Widgets\LastIndexingRunWidget:
+    tags:
+      - name: dashboard.widget
+        identifier: 'solrDashboardWidgets.lastIndexingRun'
+        groupNames: 'solr'
+        title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.lastIndexingRun.title'
+        description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.lastIndexingRun.description'
+        iconIdentifier: 'content-dashboard'
+        height: 'small'
+        width: 'small'
+
+  KonradMichalik\SolrDashboardWidgets\Widgets\SearchStatisticsWidget:
+    tags:
+      - name: dashboard.widget
+        identifier: 'solrDashboardWidgets.searchStatistics'
+        groupNames: 'solr'
+        title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchStatistics.title'
+        description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchStatistics.description'
+        iconIdentifier: 'content-dashboard'
+        height: 'medium'
+        width: 'medium'
