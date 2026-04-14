@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" datatype="plaintext" original="messages" date="2026-04-14T00:00:00Z" product-name="solr_dashboard_widgets">
+		<header/>
+		<body>
+			<trans-unit id="group.solr.label" resname="group.solr.label">
+				<source>Apache Solr</source>
+			</trans-unit>
+
+			<trans-unit id="widget.connectionStatus.title" resname="widget.connectionStatus.title">
+				<source>Solr Connection Status</source>
+			</trans-unit>
+			<trans-unit id="widget.connectionStatus.description" resname="widget.connectionStatus.description">
+				<source>Shows the connection status for each configured Solr core.</source>
+			</trans-unit>
+
+			<trans-unit id="widget.indexQueueStatus.title" resname="widget.indexQueueStatus.title">
+				<source>Index Queue Status</source>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueStatus.description" resname="widget.indexQueueStatus.description">
+				<source>Visualizes the index queue status as a donut chart (indexed, pending, failed).</source>
+			</trans-unit>
+
+			<trans-unit id="widget.indexQueueErrors.title" resname="widget.indexQueueErrors.title">
+				<source>Index Queue Errors</source>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueErrors.description" resname="widget.indexQueueErrors.description">
+				<source>Lists the most recent failed indexing attempts.</source>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueErrors.resetButton" resname="widget.indexQueueErrors.resetButton">
+				<source>Reset all errors</source>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueErrors.resetConfirm" resname="widget.indexQueueErrors.resetConfirm">
+				<source>Are you sure you want to reset all index queue errors?</source>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueErrors.noErrors" resname="widget.indexQueueErrors.noErrors">
+				<source>No indexing errors found.</source>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueErrors.recordType" resname="widget.indexQueueErrors.recordType">
+				<source>Record Type</source>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueErrors.uid" resname="widget.indexQueueErrors.uid">
+				<source>UID</source>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueErrors.error" resname="widget.indexQueueErrors.error">
+				<source>Error</source>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueErrors.timestamp" resname="widget.indexQueueErrors.timestamp">
+				<source>Timestamp</source>
+			</trans-unit>
+
+			<trans-unit id="widget.documentsInIndex.title" resname="widget.documentsInIndex.title">
+				<source>Documents in Index</source>
+			</trans-unit>
+			<trans-unit id="widget.documentsInIndex.description" resname="widget.documentsInIndex.description">
+				<source>Shows the number of indexed documents per Solr core as a bar chart.</source>
+			</trans-unit>
+			<trans-unit id="widget.documentsInIndex.unreachable" resname="widget.documentsInIndex.unreachable">
+				<source>Unreachable</source>
+			</trans-unit>
+
+			<trans-unit id="widget.lastIndexingRun.title" resname="widget.lastIndexingRun.title">
+				<source>Last Indexing Run</source>
+			</trans-unit>
+			<trans-unit id="widget.lastIndexingRun.description" resname="widget.lastIndexingRun.description">
+				<source>Shows the timestamp of the last Solr indexer scheduler run.</source>
+			</trans-unit>
+			<trans-unit id="widget.lastIndexingRun.ago" resname="widget.lastIndexingRun.ago">
+				<source>%s ago</source>
+			</trans-unit>
+			<trans-unit id="widget.lastIndexingRun.never" resname="widget.lastIndexingRun.never">
+				<source>No indexing run found.</source>
+			</trans-unit>
+
+			<trans-unit id="widget.searchStatistics.title" resname="widget.searchStatistics.title">
+				<source>Search Statistics</source>
+			</trans-unit>
+			<trans-unit id="widget.searchStatistics.description" resname="widget.searchStatistics.description">
+				<source>Displays top search terms, no-hit queries, and search volume over time.</source>
+			</trans-unit>
+			<trans-unit id="widget.searchStatistics.topSearchTerms" resname="widget.searchStatistics.topSearchTerms">
+				<source>Top Search Terms</source>
+			</trans-unit>
+			<trans-unit id="widget.searchStatistics.noHitQueries" resname="widget.searchStatistics.noHitQueries">
+				<source>Queries Without Results</source>
+			</trans-unit>
+			<trans-unit id="widget.searchStatistics.searchVolume" resname="widget.searchStatistics.searchVolume">
+				<source>Search Volume</source>
+			</trans-unit>
+			<trans-unit id="widget.searchStatistics.noDataHint" resname="widget.searchStatistics.noDataHint">
+				<source>Statistics are disabled or no data is available yet.</source>
+			</trans-unit>
+			<trans-unit id="widget.searchStatistics.activationHint" resname="widget.searchStatistics.activationHint">
+				<source>Enable plugin.tx_solr.statistics = 1 in your TypoScript configuration.</source>
+			</trans-unit>
+
+			<trans-unit id="preset.solrOverview.title" resname="preset.solrOverview.title">
+				<source>Solr Overview</source>
+			</trans-unit>
+			<trans-unit id="preset.solrOverview.description" resname="preset.solrOverview.description">
+				<source>A predefined dashboard with all Solr widgets.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

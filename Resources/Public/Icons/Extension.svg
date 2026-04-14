@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Dashboard grid background -->
+  <rect x="4" y="4" width="26" height="18" rx="3" fill="#FF8700" opacity="0.85"/>
+  <rect x="34" y="4" width="26" height="18" rx="3" fill="#FF8700" opacity="0.6"/>
+  <rect x="4" y="26" width="26" height="18" rx="3" fill="#FF8700" opacity="0.6"/>
+  <rect x="34" y="26" width="26" height="18" rx="3" fill="#FF8700" opacity="0.4"/>
+  <!-- Magnifying glass circle -->
+  <circle cx="28" cy="42" r="13" fill="none" stroke="#FF8700" stroke-width="4"/>
+  <!-- Magnifying glass handle -->
+  <line x1="38" y1="52" x2="58" y2="62" stroke="#FF8700" stroke-width="4" stroke-linecap="round"/>
+  <!-- Search highlight dot -->
+  <circle cx="24" cy="38" r="3" fill="#FF8700" opacity="0.7"/>
+</svg>
