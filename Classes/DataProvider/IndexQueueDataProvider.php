@@ -32,7 +32,7 @@ final class IndexQueueDataProvider
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
         $queryBuilder
             ->select('indexed', 'errors')
-            ->addSelect($queryBuilder->expr()->count('*', 'cnt'))
+            ->addSelectLiteral($queryBuilder->expr()->count('*', 'cnt'))
             ->from(self::TABLE)
             ->groupBy('indexed', 'errors');
 

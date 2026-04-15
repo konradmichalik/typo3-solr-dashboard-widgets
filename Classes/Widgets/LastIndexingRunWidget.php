@@ -14,34 +14,45 @@ declare(strict_types=1);
 namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 
 use KonradMichalik\SolrDashboardWidgets\DataProvider\LastIndexingRunDataProvider;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
-use TYPO3\CMS\Fluid\View\StandaloneView;
 
-final class LastIndexingRunWidget implements WidgetInterface
+final class LastIndexingRunWidget implements WidgetInterface, RequestAwareWidgetInterface
 {
+    private ServerRequestInterface $request;
+
     public function __construct(
         private readonly WidgetConfigurationInterface $configuration,
         private readonly LastIndexingRunDataProvider $dataProvider,
-        private readonly StandaloneView $view,
+        private readonly ViewFactoryInterface $viewFactory,
     ) {}
+
+    public function setRequest(ServerRequestInterface $request): void
+    {
+        $this->request = $request;
+    }
 
     public function renderWidgetContent(): string
     {
         $lastRun = $this->dataProvider->getLastRun();
 
-        $this->view->setTemplatePathAndFilename(
-            'EXT:solr_dashboard_widgets/Resources/Private/Templates/Widget/LastIndexingRun.html'
-        );
-        $this->view->assign('lastRun', $lastRun);
-        $this->view->assign('configuration', $this->configuration);
+        $view = $this->viewFactory->create(new ViewFactoryData(
+            templateRootPaths: ['EXT:solr_dashboard_widgets/Resources/Private/Templates/'],
+            request: $this->request,
+        ));
+        $view->assign('lastRun', $lastRun);
+        $view->assign('configuration', $this->configuration);
 
         if ($lastRun !== null) {
-            $this->view->assign('status', $this->dataProvider->getStatus($lastRun['timestamp']));
-            $this->view->assign('humanReadableAge', $this->dataProvider->getHumanReadableAge($lastRun['timestamp']));
+            $view->assign('status', $this->dataProvider->getStatus($lastRun['timestamp']));
+            $view->assign('humanReadableAge', $this->dataProvider->getHumanReadableAge($lastRun['timestamp']));
         }
 
-        return $this->view->render();
+        return $view->render('Widget/LastIndexingRun');
     }
 
     public function getOptions(): array

@@ -14,27 +14,38 @@ declare(strict_types=1);
 namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 
 use KonradMichalik\SolrDashboardWidgets\DataProvider\ConnectionStatusDataProvider;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
-use TYPO3\CMS\Fluid\View\StandaloneView;
 
-final class ConnectionStatusWidget implements WidgetInterface
+final class ConnectionStatusWidget implements WidgetInterface, RequestAwareWidgetInterface
 {
+    private ServerRequestInterface $request;
+
     public function __construct(
         private readonly WidgetConfigurationInterface $configuration,
         private readonly ConnectionStatusDataProvider $dataProvider,
-        private readonly StandaloneView $view,
+        private readonly ViewFactoryInterface $viewFactory,
     ) {}
+
+    public function setRequest(ServerRequestInterface $request): void
+    {
+        $this->request = $request;
+    }
 
     public function renderWidgetContent(): string
     {
-        $this->view->setTemplatePathAndFilename(
-            'EXT:solr_dashboard_widgets/Resources/Private/Templates/Widget/ConnectionStatus.html'
-        );
-        $this->view->assign('connections', $this->dataProvider->getConnections());
-        $this->view->assign('configuration', $this->configuration);
+        $view = $this->viewFactory->create(new ViewFactoryData(
+            templateRootPaths: ['EXT:solr_dashboard_widgets/Resources/Private/Templates/'],
+            request: $this->request,
+        ));
+        $view->assign('connections', $this->dataProvider->getConnections());
+        $view->assign('configuration', $this->configuration);
 
-        return $this->view->render();
+        return $view->render('Widget/ConnectionStatus');
     }
 
     public function getOptions(): array

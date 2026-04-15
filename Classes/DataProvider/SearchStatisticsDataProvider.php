@@ -46,7 +46,7 @@ final class SearchStatisticsDataProvider
 
         return $queryBuilder
             ->select('keywords')
-            ->addSelect($queryBuilder->expr()->count('*', 'cnt'))
+            ->addSelectLiteral($queryBuilder->expr()->count('*', 'cnt'))
             ->from(self::TABLE)
             ->where(
                 $queryBuilder->expr()->gt('tstamp', $queryBuilder->createNamedParameter($since, Connection::PARAM_INT)),
@@ -69,7 +69,7 @@ final class SearchStatisticsDataProvider
 
         return $queryBuilder
             ->select('keywords')
-            ->addSelect($queryBuilder->expr()->count('*', 'cnt'))
+            ->addSelectLiteral($queryBuilder->expr()->count('*', 'cnt'))
             ->from(self::TABLE)
             ->where(
                 $queryBuilder->expr()->gt('tstamp', $queryBuilder->createNamedParameter($since, Connection::PARAM_INT)),
@@ -92,7 +92,7 @@ final class SearchStatisticsDataProvider
 
         return $queryBuilder
             ->selectLiteral('DATE(FROM_UNIXTIME(tstamp)) AS day')
-            ->addSelect($queryBuilder->expr()->count('*', 'cnt'))
+            ->addSelectLiteral($queryBuilder->expr()->count('*', 'cnt'))
             ->from(self::TABLE)
             ->where(
                 $queryBuilder->expr()->gt('tstamp', $queryBuilder->createNamedParameter($since, Connection::PARAM_INT))

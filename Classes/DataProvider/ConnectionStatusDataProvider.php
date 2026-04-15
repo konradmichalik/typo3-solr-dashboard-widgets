@@ -39,7 +39,7 @@ final class ConnectionStatusDataProvider
 
             foreach ($siteConnections as $connection) {
                 $reachable = false;
-                $node = $connection->getNode('read');
+                $endpoint = $connection->getEndpoint('read');
 
                 try {
                     $reachable = $connection->getReadService()->ping();
@@ -48,9 +48,9 @@ final class ConnectionStatusDataProvider
 
                 $connections[] = [
                     'siteLabel' => $site->getLabel(),
-                    'host' => $node->getHost(),
-                    'port' => $node->getPort(),
-                    'core' => $node->getCoreName(),
+                    'host' => $endpoint->getHost(),
+                    'port' => $endpoint->getPort(),
+                    'core' => $endpoint->getCore(),
                     'reachable' => $reachable,
                 ];
             }

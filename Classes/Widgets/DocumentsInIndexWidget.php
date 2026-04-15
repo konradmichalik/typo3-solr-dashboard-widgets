@@ -14,31 +14,42 @@ declare(strict_types=1);
 namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 
 use KonradMichalik\SolrDashboardWidgets\DataProvider\DocumentsInIndexDataProvider;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
 use TYPO3\CMS\Dashboard\Widgets\JavaScriptInterface;
+use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
-use TYPO3\CMS\Fluid\View\StandaloneView;
 
-final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterface
+final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterface, RequestAwareWidgetInterface
 {
+    private ServerRequestInterface $request;
+
     public function __construct(
         private readonly WidgetConfigurationInterface $configuration,
         private readonly DocumentsInIndexDataProvider $dataProvider,
-        private readonly StandaloneView $view,
+        private readonly ViewFactoryInterface $viewFactory,
     ) {}
+
+    public function setRequest(ServerRequestInterface $request): void
+    {
+        $this->request = $request;
+    }
 
     public function renderWidgetContent(): string
     {
         $documentCounts = $this->dataProvider->getDocumentCounts();
 
-        $this->view->setTemplatePathAndFilename(
-            'EXT:solr_dashboard_widgets/Resources/Private/Templates/Widget/DocumentsInIndex.html'
-        );
-        $this->view->assign('chartData', json_encode($this->getChartData($documentCounts), JSON_THROW_ON_ERROR));
-        $this->view->assign('configuration', $this->configuration);
+        $view = $this->viewFactory->create(new ViewFactoryData(
+            templateRootPaths: ['EXT:solr_dashboard_widgets/Resources/Private/Templates/'],
+            request: $this->request,
+        ));
+        $view->assign('chartData', json_encode($this->getChartData($documentCounts), JSON_THROW_ON_ERROR));
+        $view->assign('configuration', $this->configuration);
 
-        return $this->view->render();
+        return $view->render('Widget/DocumentsInIndex');
     }
 
     public function getJavaScriptModuleInstructions(): array

@@ -14,30 +14,41 @@ declare(strict_types=1);
 namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 
 use KonradMichalik\SolrDashboardWidgets\DataProvider\SearchStatisticsDataProvider;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
 use TYPO3\CMS\Dashboard\Widgets\JavaScriptInterface;
+use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
-use TYPO3\CMS\Fluid\View\StandaloneView;
 
-final class SearchStatisticsWidget implements WidgetInterface, JavaScriptInterface
+final class SearchStatisticsWidget implements WidgetInterface, JavaScriptInterface, RequestAwareWidgetInterface
 {
+    private ServerRequestInterface $request;
+
     public function __construct(
         private readonly WidgetConfigurationInterface $configuration,
         private readonly SearchStatisticsDataProvider $dataProvider,
-        private readonly StandaloneView $view,
+        private readonly ViewFactoryInterface $viewFactory,
     ) {}
+
+    public function setRequest(ServerRequestInterface $request): void
+    {
+        $this->request = $request;
+    }
 
     public function renderWidgetContent(): string
     {
-        $this->view->setTemplatePathAndFilename(
-            'EXT:solr_dashboard_widgets/Resources/Private/Templates/Widget/SearchStatistics.html'
-        );
-        $this->view->assign('configuration', $this->configuration);
+        $view = $this->viewFactory->create(new ViewFactoryData(
+            templateRootPaths: ['EXT:solr_dashboard_widgets/Resources/Private/Templates/'],
+            request: $this->request,
+        ));
+        $view->assign('configuration', $this->configuration);
 
         if (!$this->dataProvider->isTableAvailable()) {
-            $this->view->assign('noData', true);
-            return $this->view->render();
+            $view->assign('noData', true);
+            return $view->render('Widget/SearchStatistics');
         }
 
         $topTerms = $this->dataProvider->getTopSearchTerms(30, 10);
@@ -47,17 +58,17 @@ final class SearchStatisticsWidget implements WidgetInterface, JavaScriptInterfa
         $hasData = $topTerms !== [] || $noHitQueries !== [] || $volumePerDay !== [];
 
         if (!$hasData) {
-            $this->view->assign('noData', true);
-            return $this->view->render();
+            $view->assign('noData', true);
+            return $view->render('Widget/SearchStatistics');
         }
 
-        $this->view->assign('noData', false);
-        $this->view->assign('topTerms', $topTerms);
-        $this->view->assign('noHitQueries', $noHitQueries);
-        $this->view->assign('topTermsChartData', json_encode($this->getTopTermsChartData($topTerms), JSON_THROW_ON_ERROR));
-        $this->view->assign('volumeChartData', json_encode($this->getVolumeChartData($volumePerDay), JSON_THROW_ON_ERROR));
+        $view->assign('noData', false);
+        $view->assign('topTerms', $topTerms);
+        $view->assign('noHitQueries', $noHitQueries);
+        $view->assign('topTermsChartData', json_encode($this->getTopTermsChartData($topTerms), JSON_THROW_ON_ERROR));
+        $view->assign('volumeChartData', json_encode($this->getVolumeChartData($volumePerDay), JSON_THROW_ON_ERROR));
 
-        return $this->view->render();
+        return $view->render('Widget/SearchStatistics');
     }
 
     public function getJavaScriptModuleInstructions(): array

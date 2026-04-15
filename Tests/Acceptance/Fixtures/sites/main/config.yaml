@@ -1,4 +1,4 @@
-base: 'https://VERSION_PLACEHOLDER.solr-dashboard-widgets.ddev.site'
+base: 'https://VERSION_PLACEHOLDER.solr-dashboard-widgets.ddev.site/'
 languages:
   -
     title: English
@@ -8,11 +8,13 @@ languages:
     locale: en_US.UTF-8
     navigationTitle: English
     flag: us
+    solr_core_read: core_en
 rootPageId: 1
 websiteTitle: 'EXT:solr-dashboard-widgets Dev Environment'
 solr_enabled_read: true
 solr_scheme_read: http
 solr_host_read: solr
 solr_port_read: 8983
-solr_path_read: /solr/core_en/
+solr_path_read: /
+solr_core_read: core_en
 solr_use_write_connection: false

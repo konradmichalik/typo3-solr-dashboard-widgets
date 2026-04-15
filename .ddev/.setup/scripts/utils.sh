@@ -261,6 +261,12 @@ function setup_composer() {
     composer config repositories.packages path 'packages/*' --working-dir "$BASE_PATH"
     composer config --no-interaction allow-plugins.typo3/cms-composer-installers true --working-dir "$BASE_PATH"
     composer config --no-interaction allow-plugins.typo3/class-alias-loader true --working-dir "$BASE_PATH"
+
+    # v14 requires alpha stability for EXT:solr (no stable v14 release yet)
+    if [ "$VERSION" == "14" ]; then
+        composer config minimum-stability alpha --working-dir "$BASE_PATH"
+        composer config prefer-stable true --working-dir "$BASE_PATH"
+    fi
 }
 
 # Function to set up TYPO3 configuration.

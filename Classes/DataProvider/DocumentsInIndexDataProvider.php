@@ -50,7 +50,7 @@ final class DocumentsInIndexDataProvider
 
                 $counts[] = [
                     'siteLabel' => $site->getLabel(),
-                    'core' => $connection->getNode('read')->getCoreName(),
+                    'core' => $connection->getEndpoint('read')->getCore() ?? '',
                     'count' => $count,
                     'reachable' => $reachable,
                 ];

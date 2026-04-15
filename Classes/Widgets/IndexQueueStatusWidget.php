@@ -14,32 +14,43 @@ declare(strict_types=1);
 namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 
 use KonradMichalik\SolrDashboardWidgets\DataProvider\IndexQueueDataProvider;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
 use TYPO3\CMS\Dashboard\Widgets\JavaScriptInterface;
+use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
-use TYPO3\CMS\Fluid\View\StandaloneView;
 
-final class IndexQueueStatusWidget implements WidgetInterface, JavaScriptInterface
+final class IndexQueueStatusWidget implements WidgetInterface, JavaScriptInterface, RequestAwareWidgetInterface
 {
+    private ServerRequestInterface $request;
+
     public function __construct(
         private readonly WidgetConfigurationInterface $configuration,
         private readonly IndexQueueDataProvider $dataProvider,
-        private readonly StandaloneView $view,
+        private readonly ViewFactoryInterface $viewFactory,
     ) {}
+
+    public function setRequest(ServerRequestInterface $request): void
+    {
+        $this->request = $request;
+    }
 
     public function renderWidgetContent(): string
     {
         $status = $this->dataProvider->getQueueStatus();
 
-        $this->view->setTemplatePathAndFilename(
-            'EXT:solr_dashboard_widgets/Resources/Private/Templates/Widget/IndexQueueStatus.html'
-        );
-        $this->view->assign('status', $status);
-        $this->view->assign('chartData', json_encode($this->getChartData($status), JSON_THROW_ON_ERROR));
-        $this->view->assign('configuration', $this->configuration);
+        $view = $this->viewFactory->create(new ViewFactoryData(
+            templateRootPaths: ['EXT:solr_dashboard_widgets/Resources/Private/Templates/'],
+            request: $this->request,
+        ));
+        $view->assign('status', $status);
+        $view->assign('chartData', json_encode($this->getChartData($status), JSON_THROW_ON_ERROR));
+        $view->assign('configuration', $this->configuration);
 
-        return $this->view->render();
+        return $view->render('Widget/IndexQueueStatus');
     }
 
     public function getJavaScriptModuleInstructions(): array
