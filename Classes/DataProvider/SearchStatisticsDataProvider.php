@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the "solr_dashboard_widgets" TYPO3 CMS extension.
+ * This file is part of the "typo3_solr_dashboard_widgets" TYPO3 CMS extension.
  *
  * (c) 2026 Konrad Michalik <hej@konradmichalik.dev>
  *
@@ -37,49 +37,25 @@ final class SearchStatisticsDataProvider
     }
 
     /**
-     * @return list<array{keywords: string, cnt: int}>
+     * @return list<array{keywords: string, cnt: int, percent: float}>
      */
     public function getTopSearchTerms(int $days = 30, int $limit = 10): array
     {
         $since = time() - ($days * 86400);
-        $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
+        $rows = $this->fetchTerms($since, $limit, withHits: true);
 
-        return $queryBuilder
-            ->select('keywords')
-            ->addSelectLiteral($queryBuilder->expr()->count('*', 'cnt'))
-            ->from(self::TABLE)
-            ->where(
-                $queryBuilder->expr()->gt('tstamp', $queryBuilder->createNamedParameter($since, Connection::PARAM_INT)),
-                $queryBuilder->expr()->gt('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT))
-            )
-            ->groupBy('keywords')
-            ->orderBy('cnt', 'DESC')
-            ->setMaxResults($limit)
-            ->executeQuery()
-            ->fetchAllAssociative();
+        return $this->attachPercentages($rows, $this->countSearches($since, withHits: true));
     }
 
     /**
-     * @return list<array{keywords: string, cnt: int}>
+     * @return list<array{keywords: string, cnt: int, percent: float}>
      */
     public function getNoHitQueries(int $days = 30, int $limit = 5): array
     {
         $since = time() - ($days * 86400);
-        $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
+        $rows = $this->fetchTerms($since, $limit, withHits: false);
 
-        return $queryBuilder
-            ->select('keywords')
-            ->addSelectLiteral($queryBuilder->expr()->count('*', 'cnt'))
-            ->from(self::TABLE)
-            ->where(
-                $queryBuilder->expr()->gt('tstamp', $queryBuilder->createNamedParameter($since, Connection::PARAM_INT)),
-                $queryBuilder->expr()->eq('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT))
-            )
-            ->groupBy('keywords')
-            ->orderBy('cnt', 'DESC')
-            ->setMaxResults($limit)
-            ->executeQuery()
-            ->fetchAllAssociative();
+        return $this->attachPercentages($rows, $this->countSearches($since, withHits: false));
     }
 
     /**
@@ -101,5 +77,65 @@ final class SearchStatisticsDataProvider
             ->orderBy('day', 'ASC')
             ->executeQuery()
             ->fetchAllAssociative();
+    }
+
+    /**
+     * @return list<array{keywords: string, cnt: int}>
+     */
+    private function fetchTerms(int $since, int $limit, bool $withHits): array
+    {
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
+
+        return $queryBuilder
+            ->select('keywords')
+            ->addSelectLiteral($queryBuilder->expr()->count('*', 'cnt'))
+            ->from(self::TABLE)
+            ->where(
+                $queryBuilder->expr()->gt('tstamp', $queryBuilder->createNamedParameter($since, Connection::PARAM_INT)),
+                $withHits
+                    ? $queryBuilder->expr()->gt('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT))
+                    : $queryBuilder->expr()->eq('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT))
+            )
+            ->groupBy('keywords')
+            ->orderBy('cnt', 'DESC')
+            ->setMaxResults($limit)
+            ->executeQuery()
+            ->fetchAllAssociative();
+    }
+
+    private function countSearches(int $since, bool $withHits): int
+    {
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
+        $countExpression = $queryBuilder->expr()->count('*', 'cnt');
+
+        $row = $queryBuilder
+            ->selectLiteral($countExpression)
+            ->from(self::TABLE)
+            ->where(
+                $queryBuilder->expr()->gt('tstamp', $queryBuilder->createNamedParameter($since, Connection::PARAM_INT)),
+                $withHits
+                    ? $queryBuilder->expr()->gt('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT))
+                    : $queryBuilder->expr()->eq('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT))
+            )
+            ->executeQuery()
+            ->fetchAssociative();
+
+        return $row === false ? 0 : (int)$row['cnt'];
+    }
+
+    /**
+     * @param list<array{keywords: string, cnt: int}> $rows
+     * @return list<array{keywords: string, cnt: int, percent: float}>
+     */
+    private function attachPercentages(array $rows, int $total): array
+    {
+        return array_map(
+            static fn (array $row): array => [
+                'keywords' => (string)$row['keywords'],
+                'cnt' => (int)$row['cnt'],
+                'percent' => $total > 0 ? ((int)$row['cnt'] / $total) * 100.0 : 0.0,
+            ],
+            $rows,
+        );
     }
 }
