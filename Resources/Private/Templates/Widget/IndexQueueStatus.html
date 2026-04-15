@@ -7,11 +7,11 @@
             data-chart='{chartData -> f:format.raw()}'></canvas>
     <div class="widget-content-footer mt-3">
         <dl class="row mb-0">
-            <dt class="col-sm-4 text-success">Indexed</dt>
+            <dt class="col-sm-4 text-success"><f:translate key="widget.indexQueueStatus.indexed" extensionName="solr_dashboard_widgets" /></dt>
             <dd class="col-sm-2">{status.indexed}</dd>
-            <dt class="col-sm-4 text-warning">Pending</dt>
+            <dt class="col-sm-4 text-warning"><f:translate key="widget.indexQueueStatus.pending" extensionName="solr_dashboard_widgets" /></dt>
             <dd class="col-sm-2">{status.pending}</dd>
-            <dt class="col-sm-4 text-danger">Failed</dt>
+            <dt class="col-sm-4 text-danger"><f:translate key="widget.indexQueueStatus.failed" extensionName="solr_dashboard_widgets" /></dt>
             <dd class="col-sm-2">{status.failed}</dd>
         </dl>
     </div>

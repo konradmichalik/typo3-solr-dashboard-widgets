@@ -26,6 +26,24 @@
 				<target>Visualisiert den Status der Index-Warteschlange als Donut-Diagramm (indiziert, ausstehend, fehlgeschlagen).</target>
 			</trans-unit>
 
+			<trans-unit id="widget.indexQueueStatus.indexed" resname="widget.indexQueueStatus.indexed">
+				<source>Indexed</source>
+				<target>Indiziert</target>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueStatus.pending" resname="widget.indexQueueStatus.pending">
+				<source>Pending</source>
+				<target>Ausstehend</target>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueStatus.failed" resname="widget.indexQueueStatus.failed">
+				<source>Failed</source>
+				<target>Fehlgeschlagen</target>
+			</trans-unit>
+
+			<trans-unit id="widget.connectionStatus.noConnections" resname="widget.connectionStatus.noConnections">
+				<source>No Solr connections configured.</source>
+				<target>Keine Solr-Verbindungen konfiguriert.</target>
+			</trans-unit>
+
 			<trans-unit id="widget.indexQueueErrors.title" resname="widget.indexQueueErrors.title">
 				<source>Index Queue Errors</source>
 				<target>Index-Warteschlangen-Fehler</target>

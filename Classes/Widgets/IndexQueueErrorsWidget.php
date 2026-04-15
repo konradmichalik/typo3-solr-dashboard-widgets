@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 
 use KonradMichalik\SolrDashboardWidgets\DataProvider\IndexQueueDataProvider;
+use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
 use TYPO3\CMS\Fluid\View\StandaloneView;
@@ -23,6 +24,7 @@ final class IndexQueueErrorsWidget implements WidgetInterface
     public function __construct(
         private readonly WidgetConfigurationInterface $configuration,
         private readonly IndexQueueDataProvider $dataProvider,
+        private readonly BackendUriBuilder $backendUriBuilder,
         private readonly StandaloneView $view,
     ) {}
 
@@ -32,6 +34,7 @@ final class IndexQueueErrorsWidget implements WidgetInterface
             'EXT:solr_dashboard_widgets/Resources/Private/Templates/Widget/IndexQueueErrors.html'
         );
         $this->view->assign('errors', $this->dataProvider->getErrors(10));
+        $this->view->assign('resetUrl', (string)$this->backendUriBuilder->buildUriFromRoute('solr_dashboard_widgets_reset_errors'));
         $this->view->assign('configuration', $this->configuration);
 
         return $this->view->render();

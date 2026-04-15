@@ -26,6 +26,10 @@ final class IndexQueueErrorsAjaxController
 
     public function resetAction(ServerRequestInterface $request): ResponseInterface
     {
+        if ($request->getMethod() !== 'POST') {
+            return new JsonResponse(['success' => false, 'error' => 'Method not allowed'], 405);
+        }
+
         $affectedRows = $this->dataProvider->resetErrors();
 
         return new JsonResponse([

@@ -21,6 +21,20 @@
 				<source>Visualizes the index queue status as a donut chart (indexed, pending, failed).</source>
 			</trans-unit>
 
+			<trans-unit id="widget.indexQueueStatus.indexed" resname="widget.indexQueueStatus.indexed">
+				<source>Indexed</source>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueStatus.pending" resname="widget.indexQueueStatus.pending">
+				<source>Pending</source>
+			</trans-unit>
+			<trans-unit id="widget.indexQueueStatus.failed" resname="widget.indexQueueStatus.failed">
+				<source>Failed</source>
+			</trans-unit>
+
+			<trans-unit id="widget.connectionStatus.noConnections" resname="widget.connectionStatus.noConnections">
+				<source>No Solr connections configured.</source>
+			</trans-unit>
+
 			<trans-unit id="widget.indexQueueErrors.title" resname="widget.indexQueueErrors.title">
 				<source>Index Queue Errors</source>
 			</trans-unit>
