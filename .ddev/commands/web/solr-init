@@ -1,23 +1,43 @@
 #!/bin/bash
 
 ## Description: Initialize Solr cores with EXT:solr configsets
-## Usage: solr-init
-## Example: ddev solr-init
+## Usage: solr-init [version]
+## Example: "ddev solr-init" or "ddev solr-init 13"
 
-echo "Copying EXT:solr configsets to Solr..."
+VERSION=${1:-}
 
-# Check if EXT:solr is installed
-if [ ! -d "vendor/apache-solr-for-typo3/solr" ]; then
-    echo "ERROR: EXT:solr is not installed. Run 'composer install' first."
+# Find a .Build directory with EXT:solr installed
+find_configset() {
+    local search_paths=()
+    if [ -n "$VERSION" ]; then
+        search_paths=(".Build/$VERSION/vendor/apache-solr-for-typo3/solr/Resources/Private/Solr")
+    else
+        for dir in .Build/*/vendor/apache-solr-for-typo3/solr/Resources/Private/Solr; do
+            if [ -d "$dir" ]; then
+                search_paths+=("$dir")
+                break
+            fi
+        done
+        # Fallback to root vendor
+        if [ ${#search_paths[@]} -eq 0 ] && [ -d "vendor/apache-solr-for-typo3/solr/Resources/Private/Solr" ]; then
+            search_paths=("vendor/apache-solr-for-typo3/solr/Resources/Private/Solr")
+        fi
+    fi
+
+    if [ ${#search_paths[@]} -eq 0 ]; then
+        echo ""
+        return
+    fi
+    echo "${search_paths[0]}"
+}
+
+CONFIGSET_PATH=$(find_configset)
+if [ -z "$CONFIGSET_PATH" ] || [ ! -d "$CONFIGSET_PATH" ]; then
+    echo "ERROR: EXT:solr configsets not found. Run 'ddev install' first."
     exit 1
 fi
 
-# Find the configset path in EXT:solr
-CONFIGSET_PATH="vendor/apache-solr-for-typo3/solr/Resources/Private/Solr"
-if [ ! -d "$CONFIGSET_PATH" ]; then
-    echo "ERROR: Solr configsets not found at $CONFIGSET_PATH"
-    exit 1
-fi
+echo "Using configset from: $CONFIGSET_PATH"
 
 # Copy configset to Solr container
 echo "Uploading configset to Solr..."
@@ -28,5 +48,6 @@ echo "Recreating core_en with ext_solr configset..."
 docker exec "ddev-${DDEV_SITENAME}-solr" solr delete -c core_en 2>/dev/null || true
 docker exec "ddev-${DDEV_SITENAME}-solr" solr create -c core_en -d /opt/solr/server/solr/configsets/ext_solr/
 
+echo ""
 echo "Solr core 'core_en' initialized successfully!"
 echo "Solr Admin UI: https://${DDEV_SITENAME}.ddev.site:8983/solr/"

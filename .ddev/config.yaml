@@ -1,12 +1,15 @@
 name: solr-dashboard-widgets
-type: typo3
-docroot: public
+type: php
+docroot: .Build
 php_version: "8.2"
 webserver_type: apache-fpm
 router_http_port: "80"
 router_https_port: "443"
 xdebug_enabled: false
-additional_hostnames: []
+additional_hostnames:
+  - 12.solr-dashboard-widgets
+  - 13.solr-dashboard-widgets
+  - 14.solr-dashboard-widgets
 additional_fqdns: []
 database:
   type: mariadb
@@ -14,22 +17,6 @@ database:
 webimage_extra_packages: [libxml2-utils, php8.4-pcov]
 use_dns_when_possible: true
 composer_version: "2"
-web_environment:
-  - TYPO3_CONTEXT=Development/Local
-  - TYPO3_INSTALL_DB_DRIVER=mysqli
-  - TYPO3_INSTALL_DB_USER=db
-  - TYPO3_INSTALL_DB_PASSWORD=db
-  - TYPO3_INSTALL_DB_HOST=db
-  - TYPO3_INSTALL_DB_PORT=3306
-  - TYPO3_INSTALL_DB_UNIX_SOCKET=
-  - TYPO3_INSTALL_DB_USE_EXISTING=1
-  - TYPO3_INSTALL_DB_DBNAME=db
-  - TYPO3_INSTALL_ADMIN_USER=admin
-  - TYPO3_INSTALL_ADMIN_PASSWORD=Password1!
-  - TYPO3_INSTALL_SITE_NAME=Solr Dashboard Widgets
-  - TYPO3_INSTALL_SITE_SETUP_TYPE=no
-  - TYPO3_INSTALL_SITE_BASE_URL=
-  - TYPO3_INSTALL_WEB_SERVER_CONFIG=apache
 web_extra_exposed_ports:
   - name: solr
     container_port: 8983
@@ -39,4 +26,4 @@ nodejs_version: "16"
 corepack_enable: false
 hooks:
   post-start:
-    - exec: composer install --ignore-platform-reqs --no-scripts
+    - exec: mkdir -p /var/www/html/.Build/ && cp /var/www/html/.ddev/.setup/templates/* /var/www/html/.Build/
