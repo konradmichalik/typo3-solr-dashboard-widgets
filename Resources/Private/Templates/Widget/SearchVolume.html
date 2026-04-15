@@ -1,0 +1,23 @@
+<html data-namespace-typo3-fluid="true"
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+<f:layout name="Widget/Widget" />
+
+<f:section name="main">
+    <f:if condition="{noData}">
+        <f:then>
+            <f:be.infobox title="{f:translate(key: 'widget.searchStatistics.noDataHint', extensionName: 'solr_dashboard_widgets')}" state="-1">
+                <code class="small"><f:translate key="widget.searchStatistics.activationHint" extensionName="solr_dashboard_widgets" /></code>
+            </f:be.infobox>
+        </f:then>
+        <f:else>
+            <div class="widget-chart">
+                <canvas></canvas>
+            </div>
+        </f:else>
+    </f:if>
+</f:section>
+
+<f:section name="footer">
+    <f:render partial="Widget/Button" arguments="{button: button}"/>
+</f:section>
+</html>

@@ -1,0 +1,65 @@
+<html data-namespace-typo3-fluid="true"
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+<f:layout name="Widget/Widget" />
+
+<f:section name="main">
+    <f:if condition="{noData}">
+        <f:then>
+            <f:be.infobox title="{f:translate(key: 'widget.searchStatistics.noDataHint', extensionName: 'solr_dashboard_widgets')}" state="-1">
+                <code class="small"><f:translate key="widget.searchStatistics.activationHint" extensionName="solr_dashboard_widgets" /></code>
+            </f:be.infobox>
+        </f:then>
+        <f:else>
+            <div class="mb-3">
+                <h6 class="text-uppercase text-muted small mb-2">
+                    <f:translate key="widget.searchStatistics.topSearchTerms" extensionName="solr_dashboard_widgets" />
+                </h6>
+                <f:if condition="{topTerms}">
+                    <f:then>
+                        <ul class="list-group list-group-flush">
+                            <f:for each="{topTerms}" as="term" iteration="i">
+                                <f:if condition="{i.cycle} <= 5">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1 border-0 gap-2">
+                                        <span class="text-truncate" title="{term.keywords}">{term.keywords}</span>
+                                        <span class="badge solr-widget-badge solr-widget-badge--info rounded-pill flex-shrink-0">{term.cnt}</span>
+                                    </li>
+                                </f:if>
+                            </f:for>
+                        </ul>
+                    </f:then>
+                    <f:else>
+                        <p class="small text-muted mb-0">-</p>
+                    </f:else>
+                </f:if>
+            </div>
+
+            <div>
+                <h6 class="text-uppercase text-muted small mb-2">
+                    <f:translate key="widget.searchStatistics.noHitQueries" extensionName="solr_dashboard_widgets" />
+                </h6>
+                <f:if condition="{noHitQueries}">
+                    <f:then>
+                        <ul class="list-group list-group-flush">
+                            <f:for each="{noHitQueries}" as="query" iteration="i">
+                                <f:if condition="{i.cycle} <= 5">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1 border-0 gap-2">
+                                        <span class="text-truncate" title="{query.keywords}">{query.keywords}</span>
+                                        <span class="badge solr-widget-badge solr-widget-badge--danger rounded-pill flex-shrink-0">{query.cnt}</span>
+                                    </li>
+                                </f:if>
+                            </f:for>
+                        </ul>
+                    </f:then>
+                    <f:else>
+                        <p class="small text-muted mb-0">-</p>
+                    </f:else>
+                </f:if>
+            </div>
+        </f:else>
+    </f:if>
+</f:section>
+
+<f:section name="footer">
+    <f:render partial="Widget/Button" arguments="{button: button}"/>
+</f:section>
+</html>
