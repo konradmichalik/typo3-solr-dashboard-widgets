@@ -20,8 +20,12 @@ This extension adds a ready-to-use **Solr Overview** dashboard to the TYPO3 back
 - **Index content** — document counts per type across all cores
 - **Caching** — Solr cache hit rates
 
+> [!WARNING]
+> Warning
+> This package is in early development stage and may change significantly in the future. I am working steadily to release a stable version as soon as possible.
+
 > [!NOTE]
-> Huge thanks to the [**Apache Solr for TYPO3**](https://github.com/TYPO3-Solr/ext-solr) team — this extension stands entirely on their shoulders. Everything you see here is just a different lens on the data [EXT:solr](https://extensions.typo3.org/extension/solr) already provides.
+> Props to the [**Apache Solr for TYPO3**](https://github.com/TYPO3-Solr/ext-solr) team — this extension stands entirely on their shoulders. Everything you see here is just a different lens on the data [EXT:solr](https://extensions.typo3.org/extension/solr) already provides.
 
 ## 🔥 Installation
 
