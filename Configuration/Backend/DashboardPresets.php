@@ -15,14 +15,16 @@ return [
     'solrOverview' => [
         'title' => 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:preset.solrOverview.title',
         'description' => 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:preset.solrOverview.description',
-        'iconIdentifier' => 'content-dashboard',
+        'iconIdentifier' => 'solr-dashboard-widgets',
         'defaultWidgets' => [
             'solrDashboardWidgets.connectionStatus',
+            'solrDashboardWidgets.solrHealth',
             'solrDashboardWidgets.lastIndexingRun',
+            'solrDashboardWidgets.searchTerms',
             'solrDashboardWidgets.indexQueueStatus',
+            'solrDashboardWidgets.searchVolume',
             'solrDashboardWidgets.documentsInIndex',
             'solrDashboardWidgets.indexQueueErrors',
-            'solrDashboardWidgets.searchStatistics',
         ],
         'showInWizard' => true,
     ],

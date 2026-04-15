@@ -7,6 +7,19 @@
 				<source>Apache Solr</source>
 			</trans-unit>
 
+			<trans-unit id="button.siteConfig" resname="button.siteConfig">
+				<source>Site Configuration</source>
+			</trans-unit>
+			<trans-unit id="button.indexQueue" resname="button.indexQueue">
+				<source>Index Queue</source>
+			</trans-unit>
+			<trans-unit id="button.solrInfo" resname="button.solrInfo">
+				<source>Solr Info</source>
+			</trans-unit>
+			<trans-unit id="button.scheduler" resname="button.scheduler">
+				<source>Scheduler</source>
+			</trans-unit>
+
 			<trans-unit id="widget.connectionStatus.title" resname="widget.connectionStatus.title">
 				<source>Solr Connection Status</source>
 			</trans-unit>
@@ -35,17 +48,11 @@
 				<source>No Solr connections configured.</source>
 			</trans-unit>
 
-			<trans-unit id="widget.indexQueueErrors.title" resname="widget.indexQueueErrors.title">
+<trans-unit id="widget.indexQueueErrors.title" resname="widget.indexQueueErrors.title">
 				<source>Index Queue Errors</source>
 			</trans-unit>
 			<trans-unit id="widget.indexQueueErrors.description" resname="widget.indexQueueErrors.description">
 				<source>Lists the most recent failed indexing attempts.</source>
-			</trans-unit>
-			<trans-unit id="widget.indexQueueErrors.resetButton" resname="widget.indexQueueErrors.resetButton">
-				<source>Reset all errors</source>
-			</trans-unit>
-			<trans-unit id="widget.indexQueueErrors.resetConfirm" resname="widget.indexQueueErrors.resetConfirm">
-				<source>Are you sure you want to reset all index queue errors?</source>
 			</trans-unit>
 			<trans-unit id="widget.indexQueueErrors.noErrors" resname="widget.indexQueueErrors.noErrors">
 				<source>No indexing errors found.</source>
@@ -64,10 +71,10 @@
 			</trans-unit>
 
 			<trans-unit id="widget.documentsInIndex.title" resname="widget.documentsInIndex.title">
-				<source>Documents in Index</source>
+				<source>Documents in Index by Type</source>
 			</trans-unit>
 			<trans-unit id="widget.documentsInIndex.description" resname="widget.documentsInIndex.description">
-				<source>Shows the number of indexed documents per Solr core as a bar chart.</source>
+				<source>Shows indexed documents grouped by type as a bar chart.</source>
 			</trans-unit>
 			<trans-unit id="widget.documentsInIndex.unreachable" resname="widget.documentsInIndex.unreachable">
 				<source>Unreachable</source>
@@ -86,11 +93,35 @@
 				<source>No indexing run found.</source>
 			</trans-unit>
 
-			<trans-unit id="widget.searchStatistics.title" resname="widget.searchStatistics.title">
-				<source>Search Statistics</source>
+			<trans-unit id="widget.searchVolume.title" resname="widget.searchVolume.title">
+				<source>Search Volume (last 14 days)</source>
 			</trans-unit>
-			<trans-unit id="widget.searchStatistics.description" resname="widget.searchStatistics.description">
-				<source>Displays top search terms, no-hit queries, and search volume over time.</source>
+			<trans-unit id="widget.searchVolume.description" resname="widget.searchVolume.description">
+				<source>Displays the search volume over the last 14 days as a line chart.</source>
+			</trans-unit>
+			<trans-unit id="widget.searchTerms.title" resname="widget.searchTerms.title">
+				<source>Search Terms</source>
+			</trans-unit>
+			<trans-unit id="widget.searchTerms.description" resname="widget.searchTerms.description">
+				<source>Lists the top search terms and queries without results.</source>
+			</trans-unit>
+
+			<trans-unit id="widget.solrHealth.title" resname="widget.solrHealth.title">
+				<source>Solr Health</source>
+			</trans-unit>
+			<trans-unit id="widget.solrHealth.description" resname="widget.solrHealth.description">
+				<source>Shows JVM heap usage, query latency, request rate and Solr version.</source>
+			</trans-unit>
+
+			<trans-unit id="widget.cacheHitRates.title" resname="widget.cacheHitRates.title">
+				<source>Cache Hit Rates</source>
+			</trans-unit>
+			<trans-unit id="widget.cacheHitRates.description" resname="widget.cacheHitRates.description">
+				<source>Shows Solr cache hit rates (filter, query result, document) aggregated across cores.</source>
+			</trans-unit>
+
+			<trans-unit id="button.solrAdminUi" resname="button.solrAdminUi">
+				<source>Solr Admin UI</source>
 			</trans-unit>
 			<trans-unit id="widget.searchStatistics.topSearchTerms" resname="widget.searchStatistics.topSearchTerms">
 				<source>Top Search Terms</source>

@@ -44,21 +44,13 @@
 				<target>Keine Solr-Verbindungen konfiguriert.</target>
 			</trans-unit>
 
-			<trans-unit id="widget.indexQueueErrors.title" resname="widget.indexQueueErrors.title">
+<trans-unit id="widget.indexQueueErrors.title" resname="widget.indexQueueErrors.title">
 				<source>Index Queue Errors</source>
 				<target>Index-Warteschlangen-Fehler</target>
 			</trans-unit>
 			<trans-unit id="widget.indexQueueErrors.description" resname="widget.indexQueueErrors.description">
 				<source>Lists the most recent failed indexing attempts.</source>
 				<target>Listet die letzten fehlgeschlagenen Indexierungsversuche auf.</target>
-			</trans-unit>
-			<trans-unit id="widget.indexQueueErrors.resetButton" resname="widget.indexQueueErrors.resetButton">
-				<source>Reset all errors</source>
-				<target>Alle Fehler zurücksetzen</target>
-			</trans-unit>
-			<trans-unit id="widget.indexQueueErrors.resetConfirm" resname="widget.indexQueueErrors.resetConfirm">
-				<source>Are you sure you want to reset all index queue errors?</source>
-				<target>Möchten Sie wirklich alle Fehler der Index-Warteschlange zurücksetzen?</target>
 			</trans-unit>
 			<trans-unit id="widget.indexQueueErrors.noErrors" resname="widget.indexQueueErrors.noErrors">
 				<source>No indexing errors found.</source>
@@ -82,12 +74,12 @@
 			</trans-unit>
 
 			<trans-unit id="widget.documentsInIndex.title" resname="widget.documentsInIndex.title">
-				<source>Documents in Index</source>
-				<target>Dokumente im Index</target>
+				<source>Documents in Index by Type</source>
+				<target>Dokumente im Index nach Typ</target>
 			</trans-unit>
 			<trans-unit id="widget.documentsInIndex.description" resname="widget.documentsInIndex.description">
-				<source>Shows the number of indexed documents per Solr core as a bar chart.</source>
-				<target>Zeigt die Anzahl der indizierten Dokumente pro Solr-Core als Balkendiagramm.</target>
+				<source>Shows indexed documents grouped by type as a bar chart.</source>
+				<target>Zeigt die indizierten Dokumente gruppiert nach Typ als Balkendiagramm.</target>
 			</trans-unit>
 			<trans-unit id="widget.documentsInIndex.unreachable" resname="widget.documentsInIndex.unreachable">
 				<source>Unreachable</source>
@@ -111,13 +103,44 @@
 				<target>Kein Indexierungslauf gefunden.</target>
 			</trans-unit>
 
-			<trans-unit id="widget.searchStatistics.title" resname="widget.searchStatistics.title">
-				<source>Search Statistics</source>
-				<target>Suchstatistiken</target>
+			<trans-unit id="widget.searchVolume.title" resname="widget.searchVolume.title">
+				<source>Search Volume (last 14 days)</source>
+				<target>Suchvolumen (letzte 14 Tage)</target>
 			</trans-unit>
-			<trans-unit id="widget.searchStatistics.description" resname="widget.searchStatistics.description">
-				<source>Displays top search terms, no-hit queries, and search volume over time.</source>
-				<target>Zeigt die häufigsten Suchbegriffe, Suchen ohne Treffer und das Suchvolumen im Zeitverlauf.</target>
+			<trans-unit id="widget.searchVolume.description" resname="widget.searchVolume.description">
+				<source>Displays the search volume over the last 14 days as a line chart.</source>
+				<target>Zeigt das Suchvolumen der letzten 14 Tage als Liniendiagramm.</target>
+			</trans-unit>
+			<trans-unit id="widget.searchTerms.title" resname="widget.searchTerms.title">
+				<source>Search Terms</source>
+				<target>Suchbegriffe</target>
+			</trans-unit>
+			<trans-unit id="widget.searchTerms.description" resname="widget.searchTerms.description">
+				<source>Lists the top search terms and queries without results.</source>
+				<target>Listet die häufigsten Suchbegriffe und Suchen ohne Treffer auf.</target>
+			</trans-unit>
+
+			<trans-unit id="widget.solrHealth.title" resname="widget.solrHealth.title">
+				<source>Solr Health</source>
+				<target>Solr-Status</target>
+			</trans-unit>
+			<trans-unit id="widget.solrHealth.description" resname="widget.solrHealth.description">
+				<source>Shows JVM heap usage, query latency, request rate and Solr version.</source>
+				<target>Zeigt JVM-Heap-Auslastung, Abfrage-Latenz, Anfragen pro Minute und Solr-Version.</target>
+			</trans-unit>
+
+			<trans-unit id="widget.cacheHitRates.title" resname="widget.cacheHitRates.title">
+				<source>Cache Hit Rates</source>
+				<target>Cache-Trefferquote</target>
+			</trans-unit>
+			<trans-unit id="widget.cacheHitRates.description" resname="widget.cacheHitRates.description">
+				<source>Shows Solr cache hit rates (filter, query result, document) aggregated across cores.</source>
+				<target>Zeigt die Trefferquoten der Solr-Caches (Filter, Query Result, Document) über alle Cores hinweg.</target>
+			</trans-unit>
+
+			<trans-unit id="button.solrAdminUi" resname="button.solrAdminUi">
+				<source>Solr Admin UI</source>
+				<target>Solr Admin-UI</target>
 			</trans-unit>
 			<trans-unit id="widget.searchStatistics.topSearchTerms" resname="widget.searchStatistics.topSearchTerms">
 				<source>Top Search Terms</source>

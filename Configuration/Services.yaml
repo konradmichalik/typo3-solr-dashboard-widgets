@@ -6,68 +6,152 @@ services:
   KonradMichalik\SolrDashboardWidgets\:
     resource: "../Classes/*"
 
+  # --- Button providers for widget footers (link into backend modules) ----------
+  solr_dashboard_widgets.button.site_configuration:
+    class: KonradMichalik\SolrDashboardWidgets\Widgets\Provider\ModuleButtonProvider
+    arguments:
+      $routeIdentifiers: 'site_configuration'
+      $title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:button.siteConfig'
+
+  solr_dashboard_widgets.button.searchbackend_indexqueue:
+    class: KonradMichalik\SolrDashboardWidgets\Widgets\Provider\ModuleButtonProvider
+    arguments:
+      $routeIdentifiers: 'searchbackend_indexqueue'
+      $title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:button.indexQueue'
+
+  solr_dashboard_widgets.button.searchbackend_info:
+    class: KonradMichalik\SolrDashboardWidgets\Widgets\Provider\ModuleButtonProvider
+    arguments:
+      $routeIdentifiers: 'searchbackend_info'
+      $title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:button.solrInfo'
+
+  solr_dashboard_widgets.button.scheduler_manage:
+    class: KonradMichalik\SolrDashboardWidgets\Widgets\Provider\ModuleButtonProvider
+    arguments:
+      # v14 renamed the identifier to `scheduler`; keep `scheduler_manage` as fallback for v13.
+      $routeIdentifiers: ['scheduler', 'scheduler_manage']
+      $title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:button.scheduler'
+
+  solr_dashboard_widgets.button.solr_admin_ui:
+    class: KonradMichalik\SolrDashboardWidgets\Widgets\Provider\SolrAdminUiButtonProvider
+    arguments:
+      $title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:button.solrAdminUi'
+
+  # --- Widgets ------------------------------------------------------------------
   KonradMichalik\SolrDashboardWidgets\Widgets\ConnectionStatusWidget:
+    arguments:
+      $buttonProvider: '@solr_dashboard_widgets.button.site_configuration'
     tags:
       - name: dashboard.widget
         identifier: 'solrDashboardWidgets.connectionStatus'
         groupNames: 'solr'
         title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.connectionStatus.title'
         description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.connectionStatus.description'
-        iconIdentifier: 'content-dashboard'
-        height: 'small'
+        iconIdentifier: 'solr-dashboard-widgets'
+        height: 'medium'
         width: 'small'
 
   KonradMichalik\SolrDashboardWidgets\Widgets\IndexQueueStatusWidget:
+    arguments:
+      $buttonProvider: '@solr_dashboard_widgets.button.searchbackend_indexqueue'
     tags:
       - name: dashboard.widget
         identifier: 'solrDashboardWidgets.indexQueueStatus'
         groupNames: 'solr'
         title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueStatus.title'
         description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueStatus.description'
-        iconIdentifier: 'content-dashboard'
+        iconIdentifier: 'solr-dashboard-widgets'
         height: 'medium'
         width: 'small'
 
   KonradMichalik\SolrDashboardWidgets\Widgets\IndexQueueErrorsWidget:
+    arguments:
+      $buttonProvider: '@solr_dashboard_widgets.button.searchbackend_indexqueue'
     tags:
       - name: dashboard.widget
         identifier: 'solrDashboardWidgets.indexQueueErrors'
         groupNames: 'solr'
         title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueErrors.title'
         description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueErrors.description'
-        iconIdentifier: 'content-dashboard'
+        iconIdentifier: 'solr-dashboard-widgets'
         height: 'medium'
         width: 'medium'
 
   KonradMichalik\SolrDashboardWidgets\Widgets\DocumentsInIndexWidget:
+    arguments:
+      $buttonProvider: '@solr_dashboard_widgets.button.searchbackend_info'
     tags:
       - name: dashboard.widget
         identifier: 'solrDashboardWidgets.documentsInIndex'
         groupNames: 'solr'
         title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.documentsInIndex.title'
         description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.documentsInIndex.description'
-        iconIdentifier: 'content-dashboard'
-        height: 'small'
+        iconIdentifier: 'solr-dashboard-widgets'
+        height: 'medium'
         width: 'medium'
 
   KonradMichalik\SolrDashboardWidgets\Widgets\LastIndexingRunWidget:
+    arguments:
+      $buttonProvider: '@solr_dashboard_widgets.button.scheduler_manage'
     tags:
       - name: dashboard.widget
         identifier: 'solrDashboardWidgets.lastIndexingRun'
         groupNames: 'solr'
         title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.lastIndexingRun.title'
         description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.lastIndexingRun.description'
-        iconIdentifier: 'content-dashboard'
-        height: 'small'
+        iconIdentifier: 'solr-dashboard-widgets'
+        height: 'medium'
         width: 'small'
 
-  KonradMichalik\SolrDashboardWidgets\Widgets\SearchStatisticsWidget:
+  KonradMichalik\SolrDashboardWidgets\Widgets\SearchVolumeWidget:
+    arguments:
+      $buttonProvider: '@solr_dashboard_widgets.button.searchbackend_info'
     tags:
       - name: dashboard.widget
-        identifier: 'solrDashboardWidgets.searchStatistics'
+        identifier: 'solrDashboardWidgets.searchVolume'
         groupNames: 'solr'
-        title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchStatistics.title'
-        description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchStatistics.description'
-        iconIdentifier: 'content-dashboard'
+        title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchVolume.title'
+        description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchVolume.description'
+        iconIdentifier: 'solr-dashboard-widgets'
         height: 'medium'
         width: 'medium'
+
+  KonradMichalik\SolrDashboardWidgets\Widgets\SearchTermsWidget:
+    arguments:
+      $buttonProvider: '@solr_dashboard_widgets.button.searchbackend_info'
+    tags:
+      - name: dashboard.widget
+        identifier: 'solrDashboardWidgets.searchTerms'
+        groupNames: 'solr'
+        title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchTerms.title'
+        description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchTerms.description'
+        iconIdentifier: 'solr-dashboard-widgets'
+        height: 'medium'
+        width: 'small'
+
+  KonradMichalik\SolrDashboardWidgets\Widgets\SolrHealthWidget:
+    arguments:
+      $buttonProvider: '@solr_dashboard_widgets.button.solr_admin_ui'
+    tags:
+      - name: dashboard.widget
+        identifier: 'solrDashboardWidgets.solrHealth'
+        groupNames: 'solr'
+        title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.solrHealth.title'
+        description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.solrHealth.description'
+        iconIdentifier: 'solr-dashboard-widgets'
+        height: 'medium'
+        width: 'small'
+
+  KonradMichalik\SolrDashboardWidgets\Widgets\CacheHitRatesWidget:
+    arguments:
+      $buttonProvider: '@solr_dashboard_widgets.button.searchbackend_info'
+    tags:
+      - name: dashboard.widget
+        identifier: 'solrDashboardWidgets.cacheHitRates'
+        groupNames: 'solr'
+        title: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.cacheHitRates.title'
+        description: 'LLL:EXT:solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.cacheHitRates.description'
+        iconIdentifier: 'solr-dashboard-widgets'
+        height: 'medium'
+        width: 'small'
+
