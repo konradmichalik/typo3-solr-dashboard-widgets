@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the "solr_dashboard_widgets" TYPO3 CMS extension.
+ * This file is part of the "typo3_solr_dashboard_widgets" TYPO3 CMS extension.
  *
  * (c) 2026 Konrad Michalik <hej@konradmichalik.dev>
  *
@@ -27,7 +27,7 @@ return Config::create()
     ])
     ->withRule(
         Header::create(
-            'solr_dashboard_widgets',
+            'typo3_solr_dashboard_widgets',
             Type::TYPO3Extension,
             Author::create('Konrad Michalik', 'hej@konradmichalik.dev'),
             CopyrightRange::from(2026),

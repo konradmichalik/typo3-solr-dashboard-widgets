@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the "solr_dashboard_widgets" TYPO3 CMS extension.
+ * This file is part of the "typo3_solr_dashboard_widgets" TYPO3 CMS extension.
  *
  * (c) 2026 Konrad Michalik <hej@konradmichalik.dev>
  *
@@ -38,7 +38,7 @@ trait DashboardWidgetViewTrait
         WidgetConfigurationInterface $configuration,
     ): ViewInterface {
         $view = $viewFactory->create(new ViewFactoryData(
-            templateRootPaths: ['EXT:solr_dashboard_widgets/Resources/Private/Templates/'],
+            templateRootPaths: ['EXT:typo3_solr_dashboard_widgets/Resources/Private/Templates/'],
             partialRootPaths: ['EXT:dashboard/Resources/Private/Partials/'],
             layoutRootPaths: ['EXT:dashboard/Resources/Private/Layouts/'],
             request: $request,

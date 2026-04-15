@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the "solr_dashboard_widgets" TYPO3 CMS extension.
+ * This file is part of the "typo3_solr_dashboard_widgets" TYPO3 CMS extension.
  *
  * (c) 2026 Konrad Michalik <hej@konradmichalik.dev>
  *
@@ -118,6 +118,6 @@ final class SolrHealthWidget implements WidgetInterface, JavaScriptInterface, Re
 
     public function getCssFiles(): array
     {
-        return ['EXT:solr_dashboard_widgets/Resources/Public/Css/solr_dashboard_widgets.css'];
+        return ['EXT:typo3_solr_dashboard_widgets/Resources/Public/Css/typo3_solr_dashboard_widgets.css'];
     }
 }

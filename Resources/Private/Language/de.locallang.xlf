@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2026-04-14T00:00:00Z" product-name="solr_dashboard_widgets">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2026-04-14T00:00:00Z" product-name="typo3_solr_dashboard_widgets">
 		<header/>
 		<body>
 			<trans-unit id="group.solr.label" resname="group.solr.label">

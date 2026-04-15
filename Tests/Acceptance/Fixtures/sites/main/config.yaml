@@ -1,4 +1,4 @@
-base: 'https://VERSION_PLACEHOLDER.solr-dashboard-widgets.ddev.site/'
+base: 'https://VERSION_PLACEHOLDER.typo3-solr-dashboard-widgets.ddev.site/'
 languages:
   -
     title: English
@@ -19,7 +19,7 @@ languages:
     flag: de
     solr_core_read: core_de
 rootPageId: 1
-websiteTitle: 'EXT:solr-dashboard-widgets Dev Environment'
+websiteTitle: 'EXT:typo3-solr-dashboard-widgets Dev Environment'
 solr_enabled_read: true
 solr_scheme_read: http
 solr_host_read: solr

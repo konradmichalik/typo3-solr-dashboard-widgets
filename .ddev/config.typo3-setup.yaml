@@ -2,8 +2,8 @@ type: php
 docroot: .Build
 webserver_type: apache-fpm
 additional_hostnames:
-  - 13.solr-dashboard-widgets
-  - 14.solr-dashboard-widgets
+  - 13.typo3-solr-dashboard-widgets
+  - 14.typo3-solr-dashboard-widgets
 hooks:
    post-start:
     - exec: mkdir -p /var/www/html/.Build/ && cp /var/www/html/.ddev/.setup/templates/* /var/www/html/.Build/

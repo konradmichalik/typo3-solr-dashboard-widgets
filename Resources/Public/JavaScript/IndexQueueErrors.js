@@ -1,5 +1,5 @@
 /**
- * Module: @konradmichalik/solr-dashboard-widgets/IndexQueueErrors
+ * Module: @konradmichalik/typo3-solr-dashboard-widgets/IndexQueueErrors
  */
 document.addEventListener('DOMContentLoaded', () => {
   const button = document.getElementById('solr-reset-errors');

@@ -1,4 +1,4 @@
-name: solr-dashboard-widgets
+name: typo3-solr-dashboard-widgets
 type: php
 docroot: .Build
 php_version: "8.2"
@@ -7,9 +7,9 @@ router_http_port: "80"
 router_https_port: "443"
 xdebug_enabled: false
 additional_hostnames:
-  - 12.solr-dashboard-widgets
-  - 13.solr-dashboard-widgets
-  - 14.solr-dashboard-widgets
+  - 12.typo3-solr-dashboard-widgets
+  - 13.typo3-solr-dashboard-widgets
+  - 14.typo3-solr-dashboard-widgets
 additional_fqdns: []
 database:
   type: mariadb

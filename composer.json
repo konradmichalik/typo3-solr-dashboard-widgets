@@ -1,5 +1,5 @@
 {
-	"name": "konradmichalik/solr-dashboard-widgets",
+	"name": "konradmichalik/typo3-solr-dashboard-widgets",
 	"description": "Solr Dashboard Widgets for TYPO3 Backend",
 	"license": [
 		"GPL-2.0-or-later"
@@ -45,7 +45,7 @@
 		},
 		"typo3/cms": {
 			"cms-package-dir": "{$vendor-dir}/typo3/cms",
-			"extension-key": "solr_dashboard_widgets",
+			"extension-key": "typo3_solr_dashboard_widgets",
 			"web-dir": "public"
 		}
 	},

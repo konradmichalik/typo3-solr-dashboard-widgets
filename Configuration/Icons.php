@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the "solr_dashboard_widgets" TYPO3 CMS extension.
+ * This file is part of the "typo3_solr_dashboard_widgets" TYPO3 CMS extension.
  *
  * (c) 2026 Konrad Michalik <hej@konradmichalik.dev>
  *
@@ -14,8 +14,8 @@ declare(strict_types=1);
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 
 return [
-    'solr-dashboard-widgets' => [
+    'typo3-solr-dashboard-widgets' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:solr_dashboard_widgets/Resources/Public/Icons/Solr.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/Solr.svg',
     ],
 ];

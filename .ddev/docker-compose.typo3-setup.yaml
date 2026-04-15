@@ -2,9 +2,9 @@
 services:
     web:
         environment:
-            - EXTENSION_KEY=solr_dashboard_widgets
-            - EXTENSION_NAME=solr-dashboard-widgets
-            - PACKAGE_NAME=konradmichalik/solr-dashboard-widgets
+            - EXTENSION_KEY=typo3_solr_dashboard_widgets
+            - EXTENSION_NAME=typo3-solr-dashboard-widgets
+            - PACKAGE_NAME=konradmichalik/typo3-solr-dashboard-widgets
             # v14 requires EXT:solr 14.0.0-alpha1+ (minimum-stability alpha)
             - TYPO3_VERSIONS=13 14
             - SYMLINK_EXCLUSIONS=.* Documentation Documentation-GENERATED-temp var vendor public
@@ -18,7 +18,7 @@ services:
             - TYPO3_INSTALL_DB_USE_EXISTING=0
             - TYPO3_INSTALL_ADMIN_USER=admin
             - TYPO3_INSTALL_ADMIN_PASSWORD=Password1!
-            - TYPO3_INSTALL_SITE_NAME=EXT:solr-dashboard-widgets Dev Environment
+            - TYPO3_INSTALL_SITE_NAME=EXT:typo3-solr-dashboard-widgets Dev Environment
             - TYPO3_INSTALL_SITE_SETUP_TYPE=site
             - TYPO3_INSTALL_WEB_SERVER_CONFIG=apache
 
@@ -30,5 +30,5 @@ services:
             - TYPO3_SETUP_ADMIN_EMAIL=admin@example.com
             - TYPO3_SETUP_ADMIN_USERNAME=admin
             - TYPO3_SETUP_ADMIN_PASSWORD=Password1!
-            - TYPO3_PROJECT_NAME=EXT:solr-dashboard-widgets Dev Environment
+            - TYPO3_PROJECT_NAME=EXT:typo3-solr-dashboard-widgets Dev Environment
             - TYPO3_SERVER_TYPE=apache
