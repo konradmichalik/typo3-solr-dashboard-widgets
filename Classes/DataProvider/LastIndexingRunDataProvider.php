@@ -55,6 +55,63 @@ final class LastIndexingRunDataProvider
         ];
     }
 
+    /**
+     * Earliest upcoming execution of any non-disabled Solr-related scheduler task.
+     *
+     * @return array{timestamp: int}|null
+     */
+    public function getNextRun(): ?array
+    {
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
+
+        $row = $queryBuilder
+            ->select('nextexecution')
+            ->from(self::TABLE)
+            ->where(
+                $queryBuilder->expr()->like(
+                    'serialized_task_object',
+                    $queryBuilder->createNamedParameter('%Solr%')
+                ),
+                $queryBuilder->expr()->eq('disable', $queryBuilder->createNamedParameter(0, \TYPO3\CMS\Core\Database\Connection::PARAM_INT)),
+                $queryBuilder->expr()->gt('nextexecution', $queryBuilder->createNamedParameter(0, \TYPO3\CMS\Core\Database\Connection::PARAM_INT))
+            )
+            ->orderBy('nextexecution', 'ASC')
+            ->setMaxResults(1)
+            ->executeQuery()
+            ->fetchAssociative();
+
+        if ($row === false) {
+            return null;
+        }
+
+        return [
+            'timestamp' => (int)$row['nextexecution'],
+        ];
+    }
+
+    public function getHumanReadableEta(int $timestamp): string
+    {
+        $diff = $timestamp - time();
+
+        if ($diff <= 0) {
+            return 'due';
+        }
+
+        if ($diff < 60) {
+            return 'in ' . $diff . ' seconds';
+        }
+
+        if ($diff < 3600) {
+            return 'in ' . (int)($diff / 60) . ' minutes';
+        }
+
+        if ($diff < 86400) {
+            return 'in ' . (int)($diff / 3600) . ' hours';
+        }
+
+        return 'in ' . (int)($diff / 86400) . ' days';
+    }
+
     public function getStatus(int $timestamp): string
     {
         $age = time() - $timestamp;

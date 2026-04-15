@@ -1,29 +1,33 @@
 <html data-namespace-typo3-fluid="true"
       xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+<f:layout name="Widget/Widget" />
 
-<div class="widget-content-main text-center">
+<f:section name="main">
     <f:if condition="{lastRun}">
         <f:then>
-            <div class="mb-2">
-                <f:switch expression="{status}">
-                    <f:case value="ok">
-                        <span class="badge bg-success fs-6">{humanReadableAge} ago</span>
-                    </f:case>
-                    <f:case value="warning">
-                        <span class="badge bg-warning text-dark fs-6">{humanReadableAge} ago</span>
-                    </f:case>
-                    <f:case value="error">
-                        <span class="badge bg-danger fs-6">{humanReadableAge} ago</span>
-                    </f:case>
-                </f:switch>
-            </div>
-            <small class="text-muted">
-                <f:format.date format="d.m.Y H:i:s">{lastRun.timestamp}</f:format.date>
-            </small>
+            <f:be.infobox title="Last run: {humanReadableAge} ago" state="{boxState}" disableIcon="false">
+                <span class="small text-muted">
+                    <f:format.date format="d.m.Y H:i:s">{lastRun.timestamp}</f:format.date>
+                </span>
+            </f:be.infobox>
         </f:then>
         <f:else>
-            <p class="text-muted"><f:translate key="widget.lastIndexingRun.never" extensionName="solr_dashboard_widgets" /></p>
+            <f:be.infobox title="No data" state="-1">
+                <f:translate key="widget.lastIndexingRun.never" extensionName="solr_dashboard_widgets" />
+            </f:be.infobox>
         </f:else>
     </f:if>
-</div>
+
+    <f:if condition="{nextRun}">
+        <f:be.infobox title="Next run: {nextRunEta}" state="-1" disableIcon="false">
+            <span class="small text-muted">
+                <f:format.date format="d.m.Y H:i:s">{nextRun.timestamp}</f:format.date>
+            </span>
+        </f:be.infobox>
+    </f:if>
+</f:section>
+
+<f:section name="footer">
+    <f:render partial="Widget/Button" arguments="{button: button}"/>
+</f:section>
 </html>
