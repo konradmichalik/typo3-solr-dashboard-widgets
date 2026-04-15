@@ -15,20 +15,24 @@ namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 
 use KonradMichalik\SolrDashboardWidgets\DataProvider\ConnectionStatusDataProvider;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\View\ViewFactoryData;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Dashboard\Widgets\AdditionalCssInterface;
+use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
 use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
 
-final class ConnectionStatusWidget implements WidgetInterface, RequestAwareWidgetInterface
+final class ConnectionStatusWidget implements WidgetInterface, RequestAwareWidgetInterface, AdditionalCssInterface
 {
+    use DashboardWidgetViewTrait;
+
     private ServerRequestInterface $request;
 
     public function __construct(
         private readonly WidgetConfigurationInterface $configuration,
         private readonly ConnectionStatusDataProvider $dataProvider,
         private readonly ViewFactoryInterface $viewFactory,
+        private readonly ?ButtonProviderInterface $buttonProvider = null,
     ) {}
 
     public function setRequest(ServerRequestInterface $request): void
@@ -38,12 +42,8 @@ final class ConnectionStatusWidget implements WidgetInterface, RequestAwareWidge
 
     public function renderWidgetContent(): string
     {
-        $view = $this->viewFactory->create(new ViewFactoryData(
-            templateRootPaths: ['EXT:solr_dashboard_widgets/Resources/Private/Templates/'],
-            request: $this->request,
-        ));
+        $view = $this->createDashboardView($this->viewFactory, $this->request, $this->buttonProvider, $this->configuration);
         $view->assign('connections', $this->dataProvider->getConnections());
-        $view->assign('configuration', $this->configuration);
 
         return $view->render('Widget/ConnectionStatus');
     }
@@ -51,5 +51,10 @@ final class ConnectionStatusWidget implements WidgetInterface, RequestAwareWidge
     public function getOptions(): array
     {
         return [];
+    }
+
+    public function getCssFiles(): array
+    {
+        return ['EXT:solr_dashboard_widgets/Resources/Public/Css/solr_dashboard_widgets.css'];
     }
 }

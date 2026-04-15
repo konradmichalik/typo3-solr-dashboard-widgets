@@ -24,11 +24,17 @@ final class ConnectionStatusDataProvider
     ) {}
 
     /**
-     * @return list<array{siteLabel: string, host: string, port: int, core: string, reachable: bool}>
+     * Returns one entry per site, each listing the site's configured Solr cores.
+     *
+     * @return list<array{
+     *     siteLabel: string,
+     *     reachable: bool,
+     *     cores: list<array{host: string, port: int, core: string, reachable: bool}>
+     * }>
      */
     public function getConnections(): array
     {
-        $connections = [];
+        $sites = [];
 
         foreach ($this->siteRepository->getAvailableSites() as $site) {
             try {
@@ -37,25 +43,37 @@ final class ConnectionStatusDataProvider
                 continue;
             }
 
+            $cores = [];
+            $siteReachable = false;
+
             foreach ($siteConnections as $connection) {
-                $reachable = false;
                 $endpoint = $connection->getEndpoint('read');
+                $reachable = false;
 
                 try {
                     $reachable = $connection->getReadService()->ping();
                 } catch (\Throwable) {
                 }
 
-                $connections[] = [
-                    'siteLabel' => $site->getLabel(),
+                if ($reachable) {
+                    $siteReachable = true;
+                }
+
+                $cores[] = [
                     'host' => $endpoint->getHost(),
                     'port' => $endpoint->getPort(),
-                    'core' => $endpoint->getCore(),
+                    'core' => $endpoint->getCore() ?? '',
                     'reachable' => $reachable,
                 ];
             }
+
+            $sites[] = [
+                'siteLabel' => $site->getLabel(),
+                'reachable' => $siteReachable,
+                'cores' => $cores,
+            ];
         }
 
-        return $connections;
+        return $sites;
     }
 }

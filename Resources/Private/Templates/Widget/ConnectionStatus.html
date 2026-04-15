@@ -1,31 +1,35 @@
 <html data-namespace-typo3-fluid="true"
       xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+<f:layout name="Widget/Widget" />
 
-<div class="widget-content-main">
+<f:section name="main">
     <f:if condition="{connections}">
         <f:then>
-            <ul class="list-group list-group-flush">
-                <f:for each="{connections}" as="connection">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>{connection.siteLabel}</strong><br>
-                            <small class="text-muted">{connection.host}:{connection.port} / {connection.core}</small>
+            <f:for each="{connections}" as="site">
+                <f:be.infobox
+                    title="{site.siteLabel}"
+                    state="{f:if(condition: site.reachable, then: 0, else: 2)}"
+                    disableIcon="false">
+                    <f:for each="{site.cores}" as="core">
+                        <div class="d-flex justify-content-between align-items-center gap-2 py-1">
+                            <span class="font-monospace small text-truncate">{core.host}:{core.port}/{core.core}</span>
+                            <span class="badge solr-widget-badge {f:if(condition: core.reachable, then: 'solr-widget-badge--info', else: 'solr-widget-badge--danger')} flex-shrink-0">
+                                <f:if condition="{core.reachable}"><f:then>OK</f:then><f:else>offline</f:else></f:if>
+                            </span>
                         </div>
-                        <f:if condition="{connection.reachable}">
-                            <f:then>
-                                <span class="badge bg-success">OK</span>
-                            </f:then>
-                            <f:else>
-                                <span class="badge bg-danger">Offline</span>
-                            </f:else>
-                        </f:if>
-                    </li>
-                </f:for>
-            </ul>
+                    </f:for>
+                </f:be.infobox>
+            </f:for>
         </f:then>
         <f:else>
-            <p class="text-muted"><f:translate key="widget.connectionStatus.noConnections" extensionName="solr_dashboard_widgets" /></p>
+            <f:be.infobox title="No connections" state="-1">
+                <f:translate key="widget.connectionStatus.noConnections" extensionName="solr_dashboard_widgets" />
+            </f:be.infobox>
         </f:else>
     </f:if>
-</div>
+</f:section>
+
+<f:section name="footer">
+    <f:render partial="Widget/Button" arguments="{button: button}"/>
+</f:section>
 </html>
