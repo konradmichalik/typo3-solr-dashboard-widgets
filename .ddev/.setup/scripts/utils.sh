@@ -29,8 +29,8 @@ function _progress() {
       _spinner &
       SPINNER_PID=$!
       # Save current stdout/stderr
-#      exec 3>&1 4>&2
-#      exec >/dev/null 2>&1
+      exec 3>&1 4>&2
+      exec >/dev/null 2>&1
     else
       printf "\n"
     fi
@@ -174,6 +174,7 @@ function post_setup() {
     import_xml_data
     import_sql_data
     import_site_configs
+    import_solr_fixtures
   _done
   _progress " ├─ Update TYPO3"
     update_typo3
@@ -370,6 +371,20 @@ function import_sql_data() {
             mysql -h db -u root -p"root" $DATABASE < "$DATA_FILE"
         else
           message yellow "No SQL files found in $FIXTURE_DIR. Import will be skipped."
+        fi
+    done
+}
+
+# Function to seed Solr demo documents by running any *.sh scripts found in
+# Tests/Acceptance/Fixtures (e.g. solr_seed.sh). Failures are logged but do
+# not abort the setup — Solr might not be reachable during early provisioning.
+function import_solr_fixtures() {
+    FIXTURE_DIR="/var/www/html/Tests/Acceptance/Fixtures"
+
+    for SCRIPT in "$FIXTURE_DIR"/*.sh; do
+        if [ -f "$SCRIPT" ]; then
+            message yellow "Running Solr fixture $(basename "$SCRIPT")..."
+            bash "$SCRIPT" || message red "Solr fixture $(basename "$SCRIPT") failed (continuing)"
         fi
     done
 }
