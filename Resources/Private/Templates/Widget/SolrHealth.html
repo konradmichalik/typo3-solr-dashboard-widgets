@@ -1,0 +1,83 @@
+<html data-namespace-typo3-fluid="true"
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers">
+<f:layout name="Widget/Widget" />
+
+<f:section name="main">
+    <f:if condition="{solrVersion}">
+        <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+            <core:icon identifier="solr-dashboard-widgets" size="medium" />
+            <div class="lh-sm">
+                <div class="fs-4 fw-bold">Solr {solrVersion}</div>
+                <a href="https://solr.apache.org/" target="_blank" rel="noreferrer" class="small text-muted">solr.apache.org</a>
+            </div>
+        </div>
+    </f:if>
+
+    <f:if condition="{memory}">
+        <f:then>
+            <div class="row align-items-center g-3 mb-3">
+                <div class="col-5">
+                    <div class="widget-chart" style="position: relative; height: 110px;">
+                        <canvas></canvas>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="fs-3 fw-bold">{usedPercent} %</div>
+                    <div class="text-muted small">
+                        <f:format.number decimals="0" thousandsSeparator=".">{usedMb}</f:format.number> /
+                        <f:format.number decimals="0" thousandsSeparator=".">{maxMb}</f:format.number> MB
+                    </div>
+                    <div class="text-muted small text-uppercase mt-1 solr-widget-hint"
+                         title="Currently used vs. maximum configured Java heap for the Solr JVM. Used ≥ 70 % warns, ≥ 85 % is critical.">
+                        JVM heap
+                    </div>
+                </div>
+            </div>
+        </f:then>
+        <f:else>
+            <f:be.infobox title="No metrics" state="-1">Solr node metrics endpoint unreachable.</f:be.infobox>
+        </f:else>
+    </f:if>
+
+    <f:if condition="{performance.reachable}">
+        <div class="border-top pt-3">
+            <div class="row g-2 text-center">
+                <div class="col-4">
+                    <div class="fw-bold">
+                        <f:format.number decimals="1">{performance.meanMs}</f:format.number>
+                        <span class="text-muted small">ms</span>
+                    </div>
+                    <div class="text-muted small text-uppercase solr-widget-hint"
+                         title="Average response time of /select queries, computed over the lifetime of each Solr core since last (re)start.">
+                        mean
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="fw-bold">
+                        <f:format.number decimals="1">{performance.p95Ms}</f:format.number>
+                        <span class="text-muted small">ms</span>
+                    </div>
+                    <div class="text-muted small text-uppercase solr-widget-hint"
+                         title="95th percentile response time — 95 % of /select queries completed faster than this. Good indicator of worst-case user experience.">
+                        p95
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="fw-bold">
+                        <f:format.number decimals="1">{performance.perMinute}</f:format.number>
+                    </div>
+                    <div class="text-muted small text-uppercase solr-widget-hint"
+                         title="Current query rate, derived from Solr's exponentially-weighted 1-minute moving average, summed across all cores.">
+                        req/min
+                    </div>
+                </div>
+            </div>
+        </div>
+    </f:if>
+</f:section>
+
+<f:section name="footer">
+    <f:render partial="Widget/Button" arguments="{button: button}"/>
+</f:section>
+</html>
