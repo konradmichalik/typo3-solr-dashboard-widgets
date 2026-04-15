@@ -64,8 +64,6 @@ All widgets appear in a dedicated **Apache Solr** group in the "Add widget" dial
 
 One card per configured TYPO3 site, listing every Solr core with a live ping result (`OK` / `offline`). Reaches out to Solr on every dashboard refresh.
 
-Footer button: jumps to the TYPO3 **Site Configuration** module.
-
 ### [Solr Health](Classes/Widgets/SolrHealthWidget.php)
 
 Combined node-level health check:
@@ -75,8 +73,6 @@ Combined node-level health check:
 - **Mean / p95 response time** and **requests per minute** aggregated across all cores
 
 Data is pulled from Solr's `/admin/metrics` and `/admin/info/system` endpoints, cached for the request.
-
-Footer button: opens the **Solr Admin UI** in a new tab.
 
 ### [Last Indexing Run](Classes/Widgets/LastIndexingRunWidget.php)
 
@@ -89,19 +85,13 @@ Shows the most recent execution of any Solr-related scheduler task (e.g. `IndexQ
 
 Doughnut chart of `tx_solr_indexqueue_item` entries grouped into *Indexed* / *Pending* / *Failed*.
 
-Footer button: jumps to EXT:solr's **Index Queue** module.
-
 ### [Index Queue Errors](Classes/Widgets/IndexQueueErrorsWidget.php)
 
 Table of the most recent queue entries with a non-empty `errors` column, including record type, uid, truncated error message (full text on hover), and timestamp.
 
-Footer button: jumps to EXT:solr's **Index Queue** module.
-
 ### [Documents in Index by Type](Classes/Widgets/DocumentsInIndexWidget.php)
 
 Bar chart of document counts **per `type` field value**, aggregated across all reachable cores via Solr's facet API (`facet.field=type`). Reflects what is actually in the index, not what is waiting in the TYPO3 queue.
-
-Footer button: jumps to the **Solr Info** module.
 
 ### [Search Volume (last 14 days)](Classes/Widgets/SearchVolumeWidget.php)
 
@@ -113,13 +103,9 @@ Line chart of daily search volume over the last 14 days, read from `tx_solr_stat
 > plugin.tx_solr.statistics = 1
 > ```
 
-Footer button: jumps to the **Solr Info** module.
-
 ### [Search Terms](Classes/Widgets/SearchTermsWidget.php)
 
 Two stacked lists: **Top Queries** (top 5 by count) and **Queries Without Results**. Uses the same `tx_solr_statistics` data source as Search Volume — the same TypoScript flag is required.
-
-Footer button: jumps to the **Solr Info** module.
 
 ### [Cache Hit Rates](Classes/Widgets/CacheHitRatesWidget.php)
 
@@ -127,8 +113,6 @@ Footer button: jumps to the **Solr Info** module.
 > Not part of the default preset — available individually via the widget picker.
 
 Aggregated hit ratios for the three Solr searcher caches (`filterCache`, `queryResultCache`, `documentCache`) shown as progress bars. Useful for spotting cache tuning opportunities.
-
-Footer button: jumps to the **Solr Info** module.
 
 ## 🎯 Dashboard preset
 
@@ -142,8 +126,6 @@ New dashboards → **+** → **Solr Overview**.
 
 - [**Apache Solr for TYPO3**](https://github.com/TYPO3-Solr/ext-solr) — every bit of data surfaced by this dashboard (index queue, statistics table, Solr connection objects, scheduler task) originates from the [EXT:solr](https://extensions.typo3.org/extension/solr) team's work.
 - [**Apache Solr**](https://solr.apache.org/) — the search platform itself and its admin `/metrics` + `/admin/info/system` endpoints, which power the Solr Health and Cache Hit Rates widgets.
-- [**TYPO3 Dashboard**](https://docs.typo3.org/c/typo3/cms-dashboard/main/en-us/) — widget interfaces (`WidgetInterface`, `ButtonProviderInterface`, `EventDataInterface`, `AdditionalCssInterface`), layout and partials this extension plugs into.
-- [Chart.js](https://www.chartjs.org/) — doughnut, bar and line charts, shipped by TYPO3 Dashboard.
 
 ## 🧑‍💻 Contributing
 
