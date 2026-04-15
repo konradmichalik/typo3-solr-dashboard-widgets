@@ -62,19 +62,16 @@ SET @sql = IF(@has_indexqueue > 0,
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
 -- ---------------------------------------------------------------------------
--- 3. tx_scheduler_task — Solr indexer scheduler entry for "Last Indexing Run"
+-- 3. tx_scheduler_task — clean up any previous broken demo entries.
+-- A real scheduler task cannot be hard-coded here because AbstractTask's
+-- constructor requires TYPO3's DI container. Create the task via the
+-- Scheduler backend UI (System > Scheduler > Add task: Solr Index Queue
+-- Worker); the widget will then pick it up.
 -- ---------------------------------------------------------------------------
 SET @has_scheduler = (SELECT COUNT(*) FROM information_schema.TABLES
     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'tx_scheduler_task');
 
-SET @sql = IF(@has_scheduler > 0, "DELETE FROM tx_scheduler_task WHERE serialized_task_object LIKE '%Solr%'", 'DO 0');
-PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
-
-SET @sql = IF(@has_scheduler > 0,
-    "INSERT INTO tx_scheduler_task (nextexecution, lastexecution_time, lastexecution_failure, lastexecution_context, serialized_task_object, disable, description, task_group)
-     VALUES (UNIX_TIMESTAMP() + 3600, UNIX_TIMESTAMP() - 600, '', 'CLI',
-             'O:39:\"ApacheSolrForTypo3\\\\\\\\Solr\\\\\\\\Task\\\\\\\\IndexQueueWorkerTask\":0:{}', 0, 'Solr Index Queue Worker (demo)', 0)",
-    'DO 0');
+SET @sql = IF(@has_scheduler > 0, "DELETE FROM tx_scheduler_task WHERE serialized_task_object LIKE '%Solr%' OR description LIKE 'Solr %'", 'DO 0');
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
 -- ---------------------------------------------------------------------------
@@ -153,7 +150,7 @@ SET @sql = IF(@has_dashboards > 0,
     'DO 0');
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
-SET @widgets_json = '{"a1":{"identifier":"solrDashboardWidgets.connectionStatus"},"a2":{"identifier":"solrDashboardWidgets.lastIndexingRun"},"a3":{"identifier":"solrDashboardWidgets.indexQueueStatus"},"a4":{"identifier":"solrDashboardWidgets.documentsInIndex"},"a5":{"identifier":"solrDashboardWidgets.indexQueueErrors"},"a6":{"identifier":"solrDashboardWidgets.searchStatistics"}}';
+SET @widgets_json = '{"a1":{"identifier":"solrDashboardWidgets.connectionStatus"},"a2":{"identifier":"solrDashboardWidgets.solrHealth"},"a3":{"identifier":"solrDashboardWidgets.lastIndexingRun"},"a4":{"identifier":"solrDashboardWidgets.searchTerms"},"a5":{"identifier":"solrDashboardWidgets.indexQueueStatus"},"a6":{"identifier":"solrDashboardWidgets.searchVolume"},"a7":{"identifier":"solrDashboardWidgets.documentsInIndex"},"a8":{"identifier":"solrDashboardWidgets.indexQueueErrors"}}';
 
 SET @sql = IF(@has_dashboards > 0 AND @has_cruser_col > 0,
     CONCAT("INSERT INTO be_dashboards (pid, tstamp, crdate, cruser_id, identifier, title, widgets) VALUES (0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 1, 'solr-overview-demo', 'Solr Overview', '", @widgets_json, "')"),

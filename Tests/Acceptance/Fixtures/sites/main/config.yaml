@@ -9,6 +9,15 @@ languages:
     navigationTitle: English
     flag: us
     solr_core_read: core_en
+  -
+    title: Deutsch
+    enabled: true
+    languageId: 1
+    base: /de/
+    locale: de_DE.UTF-8
+    navigationTitle: Deutsch
+    flag: de
+    solr_core_read: core_de
 rootPageId: 1
 websiteTitle: 'EXT:solr-dashboard-widgets Dev Environment'
 solr_enabled_read: true
