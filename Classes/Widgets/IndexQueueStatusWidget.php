@@ -16,21 +16,25 @@ namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 use KonradMichalik\SolrDashboardWidgets\DataProvider\IndexQueueDataProvider;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
-use TYPO3\CMS\Core\View\ViewFactoryData;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
+use TYPO3\CMS\Dashboard\Widgets\EventDataInterface;
 use TYPO3\CMS\Dashboard\Widgets\JavaScriptInterface;
 use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
 
-final class IndexQueueStatusWidget implements WidgetInterface, JavaScriptInterface, RequestAwareWidgetInterface
+final class IndexQueueStatusWidget implements WidgetInterface, JavaScriptInterface, RequestAwareWidgetInterface, EventDataInterface
 {
+    use DashboardWidgetViewTrait;
+
     private ServerRequestInterface $request;
 
     public function __construct(
         private readonly WidgetConfigurationInterface $configuration,
         private readonly IndexQueueDataProvider $dataProvider,
         private readonly ViewFactoryInterface $viewFactory,
+        private readonly ?ButtonProviderInterface $buttonProvider = null,
     ) {}
 
     public function setRequest(ServerRequestInterface $request): void
@@ -42,20 +46,48 @@ final class IndexQueueStatusWidget implements WidgetInterface, JavaScriptInterfa
     {
         $status = $this->dataProvider->getQueueStatus();
 
-        $view = $this->viewFactory->create(new ViewFactoryData(
-            templateRootPaths: ['EXT:solr_dashboard_widgets/Resources/Private/Templates/'],
-            request: $this->request,
-        ));
+        $view = $this->createDashboardView($this->viewFactory, $this->request, $this->buttonProvider, $this->configuration);
         $view->assign('status', $status);
-        $view->assign('chartData', json_encode($this->getChartData($status), JSON_THROW_ON_ERROR));
-        $view->assign('configuration', $this->configuration);
+        $view->assign('total', $status['indexed'] + $status['pending'] + $status['failed']);
 
         return $view->render('Widget/IndexQueueStatus');
+    }
+
+    public function getEventData(): array
+    {
+        $status = $this->dataProvider->getQueueStatus();
+
+        return [
+            'graphConfig' => [
+                'type' => 'doughnut',
+                'options' => [
+                    'maintainAspectRatio' => false,
+                    'plugins' => [
+                        'legend' => [
+                            'display' => true,
+                            'position' => 'bottom',
+                        ],
+                    ],
+                    'cutout' => '65%',
+                ],
+                'data' => [
+                    'labels' => ['Indexed', 'Pending', 'Failed'],
+                    'datasets' => [
+                        [
+                            'data' => [$status['indexed'], $status['pending'], $status['failed']],
+                            'backgroundColor' => ['#79a548', '#e8a33d', '#c83c3c'],
+                            'borderWidth' => 0,
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function getJavaScriptModuleInstructions(): array
     {
         return [
+            JavaScriptModuleInstruction::create('@typo3/dashboard/contrib/chartjs.js'),
             JavaScriptModuleInstruction::create('@typo3/dashboard/chart-initializer.js'),
         ];
     }
@@ -63,22 +95,5 @@ final class IndexQueueStatusWidget implements WidgetInterface, JavaScriptInterfa
     public function getOptions(): array
     {
         return [];
-    }
-
-    /**
-     * @param array{indexed: int, pending: int, failed: int} $status
-     * @return array<string, mixed>
-     */
-    private function getChartData(array $status): array
-    {
-        return [
-            'labels' => ['Indexed', 'Pending', 'Failed'],
-            'datasets' => [
-                [
-                    'data' => [$status['indexed'], $status['pending'], $status['failed']],
-                    'backgroundColor' => ['#198754', '#ffc107', '#dc3545'],
-                ],
-            ],
-        ];
     }
 }
