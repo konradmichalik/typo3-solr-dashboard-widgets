@@ -14,15 +14,20 @@ declare(strict_types=1);
 namespace KonradMichalik\SolrDashboardWidgets\Tests\Unit\DataProvider;
 
 use ApacheSolrForTypo3\Solr\ConnectionManager;
-use ApacheSolrForTypo3\Solr\Domain\Site\Site;
-use ApacheSolrForTypo3\Solr\Domain\Site\SiteRepository;
-use ApacheSolrForTypo3\Solr\System\Solr\SolrConnection;
+use ApacheSolrForTypo3\Solr\Domain\Site\{Site, SiteRepository};
 use ApacheSolrForTypo3\Solr\System\Solr\Service\SolrReadService;
+use ApacheSolrForTypo3\Solr\System\Solr\SolrConnection;
 use KonradMichalik\SolrDashboardWidgets\DataProvider\ConnectionStatusDataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Solarium\Core\Client\Endpoint;
 
+/**
+ * ConnectionStatusDataProviderTest.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
 final class ConnectionStatusDataProviderTest extends TestCase
 {
     private SiteRepository&MockObject $siteRepository;
@@ -59,13 +64,13 @@ final class ConnectionStatusDataProviderTest extends TestCase
         $node = $this->createMock(Endpoint::class);
         $node->method('getHost')->willReturn('localhost');
         $node->method('getPort')->willReturn(8983);
-        $node->method('getCoreName')->willReturn('core_en');
+        $node->method('getCore')->willReturn('core_en');
 
         $readService = $this->createMock(SolrReadService::class);
         $readService->method('ping')->willReturn(true);
 
         $connection = $this->createMock(SolrConnection::class);
-        $connection->method('getNode')->with('read')->willReturn($node);
+        $connection->method('getEndpoint')->with('read')->willReturn($node);
         $connection->method('getReadService')->willReturn($readService);
 
         $this->siteRepository
@@ -81,10 +86,12 @@ final class ConnectionStatusDataProviderTest extends TestCase
 
         self::assertCount(1, $result);
         self::assertSame('My Site', $result[0]['siteLabel']);
-        self::assertSame('localhost', $result[0]['host']);
-        self::assertSame(8983, $result[0]['port']);
-        self::assertSame('core_en', $result[0]['core']);
         self::assertTrue($result[0]['reachable']);
+        self::assertCount(1, $result[0]['cores']);
+        self::assertSame('localhost', $result[0]['cores'][0]['host']);
+        self::assertSame(8983, $result[0]['cores'][0]['port']);
+        self::assertSame('core_en', $result[0]['cores'][0]['core']);
+        self::assertTrue($result[0]['cores'][0]['reachable']);
     }
 
     public function testGetConnectionsSetsReachableFalseWhenPingThrows(): void
@@ -95,13 +102,13 @@ final class ConnectionStatusDataProviderTest extends TestCase
         $node = $this->createMock(Endpoint::class);
         $node->method('getHost')->willReturn('localhost');
         $node->method('getPort')->willReturn(8983);
-        $node->method('getCoreName')->willReturn('core_en');
+        $node->method('getCore')->willReturn('core_en');
 
         $readService = $this->createMock(SolrReadService::class);
-        $readService->method('ping')->willThrowException(new \RuntimeException('Connection refused'));
+        $readService->method('ping')->willThrowException(new RuntimeException('Connection refused'));
 
         $connection = $this->createMock(SolrConnection::class);
-        $connection->method('getNode')->with('read')->willReturn($node);
+        $connection->method('getEndpoint')->with('read')->willReturn($node);
         $connection->method('getReadService')->willReturn($readService);
 
         $this->siteRepository

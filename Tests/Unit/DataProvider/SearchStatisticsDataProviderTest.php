@@ -17,11 +17,16 @@ use Doctrine\DBAL\Result;
 use KonradMichalik\SolrDashboardWidgets\DataProvider\SearchStatisticsDataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Database\ConnectionPool;
+use RuntimeException;
+use TYPO3\CMS\Core\Database\{Connection, ConnectionPool};
 use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 
+/**
+ * SearchStatisticsDataProviderTest.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
 final class SearchStatisticsDataProviderTest extends TestCase
 {
     private ConnectionPool&MockObject $connectionPool;
@@ -37,7 +42,7 @@ final class SearchStatisticsDataProviderTest extends TestCase
     {
         $this->connectionPool
             ->method('getConnectionForTable')
-            ->willThrowException(new \RuntimeException('DB not available'));
+            ->willThrowException(new RuntimeException('DB not available'));
 
         self::assertFalse($this->subject->isTableAvailable());
     }
@@ -45,7 +50,7 @@ final class SearchStatisticsDataProviderTest extends TestCase
     public function testIsTableAvailableReturnsTrueWhenTableExists(): void
     {
         $schemaManager = $this->createMock(\Doctrine\DBAL\Schema\AbstractSchemaManager::class);
-        $schemaManager->method('listTableNames')->willReturn(['tx_solr_statistics', 'other_table']);
+        $schemaManager->method('tablesExist')->with(['tx_solr_statistics'])->willReturn(true);
 
         $connection = $this->createMock(Connection::class);
         $connection->method('createSchemaManager')->willReturn($schemaManager);
@@ -60,7 +65,7 @@ final class SearchStatisticsDataProviderTest extends TestCase
     public function testIsTableAvailableReturnsFalseWhenTableMissing(): void
     {
         $schemaManager = $this->createMock(\Doctrine\DBAL\Schema\AbstractSchemaManager::class);
-        $schemaManager->method('listTableNames')->willReturn(['other_table']);
+        $schemaManager->method('tablesExist')->with(['tx_solr_statistics'])->willReturn(false);
 
         $connection = $this->createMock(Connection::class);
         $connection->method('createSchemaManager')->willReturn($schemaManager);
@@ -79,7 +84,7 @@ final class SearchStatisticsDataProviderTest extends TestCase
             ['keywords' => 'solr', 'cnt' => 17],
         ];
 
-        $queryBuilder = $this->createConfiguredQueryBuilder($rows);
+        $queryBuilder = $this->createConfiguredQueryBuilder($rows, totalCount: 100);
         $this->connectionPool
             ->method('getQueryBuilderForTable')
             ->willReturn($queryBuilder);
@@ -89,6 +94,7 @@ final class SearchStatisticsDataProviderTest extends TestCase
         self::assertCount(2, $result);
         self::assertSame('typo3', $result[0]['keywords']);
         self::assertSame(42, $result[0]['cnt']);
+        self::assertSame(42.0, $result[0]['percent']);
     }
 
     public function testGetTopSearchTermsReturnsEmptyArrayWhenNoData(): void
@@ -110,7 +116,7 @@ final class SearchStatisticsDataProviderTest extends TestCase
             ['keywords' => 'missingpage', 'cnt' => 3],
         ];
 
-        $queryBuilder = $this->createConfiguredQueryBuilder($rows);
+        $queryBuilder = $this->createConfiguredQueryBuilder($rows, totalCount: 40);
         $this->connectionPool
             ->method('getQueryBuilderForTable')
             ->willReturn($queryBuilder);
@@ -120,6 +126,7 @@ final class SearchStatisticsDataProviderTest extends TestCase
         self::assertCount(2, $result);
         self::assertSame('xyznotfound', $result[0]['keywords']);
         self::assertSame(8, $result[0]['cnt']);
+        self::assertSame(20.0, $result[0]['percent']);
     }
 
     public function testGetNoHitQueriesReturnsEmptyArrayWhenNoData(): void
@@ -166,10 +173,13 @@ final class SearchStatisticsDataProviderTest extends TestCase
     }
 
     /**
-     * Creates a fully mocked QueryBuilder whose fluent chain returns itself
-     * and whose executeQuery() returns a Result stub yielding $rows.
+     * Creates a fully mocked QueryBuilder whose fluent chain returns itself,
+     * whose executeQuery() returns a Result stub yielding $rows for
+     * fetchAllAssociative() and ['cnt' => $totalCount] for fetchAssociative().
+     *
+     * @param list<array<string, mixed>> $rows
      */
-    private function createConfiguredQueryBuilder(array $rows): QueryBuilder&MockObject
+    private function createConfiguredQueryBuilder(array $rows, int $totalCount = 0): QueryBuilder&MockObject
     {
         $expr = $this->createMock(ExpressionBuilder::class);
         $expr->method('count')->willReturn('COUNT(*)');
@@ -178,19 +188,21 @@ final class SearchStatisticsDataProviderTest extends TestCase
 
         $resultStub = $this->createMock(Result::class);
         $resultStub->method('fetchAllAssociative')->willReturn($rows);
+        $resultStub->method('fetchAssociative')->willReturn(['cnt' => $totalCount]);
 
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $queryBuilder->method('expr')->willReturn($expr);
         $queryBuilder->method('select')->willReturnSelf();
         $queryBuilder->method('addSelect')->willReturnSelf();
         $queryBuilder->method('selectLiteral')->willReturnSelf();
+        $queryBuilder->method('addSelectLiteral')->willReturnSelf();
         $queryBuilder->method('from')->willReturnSelf();
         $queryBuilder->method('where')->willReturnSelf();
         $queryBuilder->method('andWhere')->willReturnSelf();
         $queryBuilder->method('groupBy')->willReturnSelf();
         $queryBuilder->method('orderBy')->willReturnSelf();
         $queryBuilder->method('setMaxResults')->willReturnSelf();
-        $queryBuilder->method('createNamedParameter')->willReturnArgument(0);
+        $queryBuilder->method('createNamedParameter')->willReturn(':p0');
         $queryBuilder->method('executeQuery')->willReturn($resultStub);
 
         return $queryBuilder;

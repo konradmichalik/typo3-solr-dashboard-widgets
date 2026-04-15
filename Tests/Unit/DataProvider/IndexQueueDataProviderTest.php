@@ -21,6 +21,11 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 
+/**
+ * IndexQueueDataProviderTest.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
 final class IndexQueueDataProviderTest extends TestCase
 {
     private ConnectionPool&MockObject $connectionPool;
@@ -88,6 +93,9 @@ final class IndexQueueDataProviderTest extends TestCase
      * Creates a fully mocked QueryBuilder whose fluent chain returns itself
      * and whose executeQuery() returns a Result stub yielding $rows.
      */
+    /**
+     * @param list<array<string, mixed>> $rows
+     */
     private function createConfiguredQueryBuilder(array $rows): QueryBuilder&MockObject
     {
         $expr = $this->createMock(ExpressionBuilder::class);
@@ -110,7 +118,7 @@ final class IndexQueueDataProviderTest extends TestCase
         $queryBuilder->method('setMaxResults')->willReturnSelf();
         $queryBuilder->method('update')->willReturnSelf();
         $queryBuilder->method('set')->willReturnSelf();
-        $queryBuilder->method('createNamedParameter')->willReturnArgument(0);
+        $queryBuilder->method('createNamedParameter')->willReturn(':p0');
         $queryBuilder->method('executeQuery')->willReturn($resultStub);
 
         return $queryBuilder;

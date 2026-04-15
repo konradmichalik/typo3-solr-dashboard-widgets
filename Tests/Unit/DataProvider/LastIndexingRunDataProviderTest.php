@@ -21,6 +21,11 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 
+/**
+ * LastIndexingRunDataProviderTest.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
 final class LastIndexingRunDataProviderTest extends TestCase
 {
     private ConnectionPool&MockObject $connectionPool;
@@ -88,7 +93,7 @@ final class LastIndexingRunDataProviderTest extends TestCase
      * Creates a fully mocked QueryBuilder whose fluent chain returns itself
      * and whose executeQuery() returns a Result stub yielding $row.
      *
-     * @param array<string, mixed>|false $row Pass false to simulate "no result found".
+     * @param array<string, mixed>|false $row pass false to simulate "no result found"
      */
     private function createConfiguredQueryBuilder(array|false $row): QueryBuilder&MockObject
     {
@@ -105,7 +110,7 @@ final class LastIndexingRunDataProviderTest extends TestCase
         $queryBuilder->method('where')->willReturnSelf();
         $queryBuilder->method('orderBy')->willReturnSelf();
         $queryBuilder->method('setMaxResults')->willReturnSelf();
-        $queryBuilder->method('createNamedParameter')->willReturnArgument(0);
+        $queryBuilder->method('createNamedParameter')->willReturn(':p0');
         $queryBuilder->method('executeQuery')->willReturn($resultStub);
 
         return $queryBuilder;
