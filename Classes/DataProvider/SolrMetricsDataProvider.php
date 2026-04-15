@@ -15,20 +15,21 @@ namespace KonradMichalik\SolrDashboardWidgets\DataProvider;
 
 use ApacheSolrForTypo3\Solr\ConnectionManager;
 use ApacheSolrForTypo3\Solr\Domain\Site\SiteRepository;
+use Throwable;
 use TYPO3\CMS\Core\Http\RequestFactory;
 
+use function array_key_exists;
+use function is_array;
+use function sprintf;
+
 /**
- * Reads operational metrics from Solr's `/admin/metrics` endpoint (plus the
- * node-level system info for the Solr version).
+ * SolrMetricsDataProvider.
  *
- * One HTTP call per reachable host covers JVM memory, per-core query
- * performance, and per-core cache statistics. Responses are cached for the
- * duration of the request so multiple widgets on the same dashboard share a
- * single fetch per host.
+ * @author Konrad Michalik <hej@konradmichalik.dev>
  */
 final class SolrMetricsDataProvider
 {
-    /** @var array<string, array|null> keyed by "scheme://host:port" */
+    /** @var array<string, array<string, mixed>|null> keyed by "scheme://host:port" */
     private array $metricsCache = [];
 
     /** @var array<string, ?string> keyed by "scheme://host:port" */
@@ -50,15 +51,16 @@ final class SolrMetricsDataProvider
     {
         foreach ($this->getUniqueHosts() as $hostUri) {
             $metrics = $this->fetchMetrics($hostUri);
-            if ($metrics === null) {
+            if (null === $metrics) {
                 continue;
             }
             $jvm = $metrics['metrics']['solr.jvm'] ?? null;
             if (!is_array($jvm) || !isset($jvm['memory.heap.used'], $jvm['memory.heap.max'])) {
                 continue;
             }
-            $used = (int)$jvm['memory.heap.used'];
-            $max = (int)$jvm['memory.heap.max'];
+            $used = (int) $jvm['memory.heap.used'];
+            $max = (int) $jvm['memory.heap.max'];
+
             return [
                 'reachable' => true,
                 'usedBytes' => $used,
@@ -66,6 +68,7 @@ final class SolrMetricsDataProvider
                 'usedPercent' => $max > 0 ? ($used / $max) * 100.0 : 0.0,
             ];
         }
+
         return null;
     }
 
@@ -86,10 +89,10 @@ final class SolrMetricsDataProvider
 
         foreach ($this->getCores() as $core) {
             $metrics = $this->fetchMetrics($core['hostUri']);
-            if ($metrics === null) {
+            if (null === $metrics) {
                 continue;
             }
-            $coreMetrics = $metrics['metrics']['solr.core.' . $core['core']] ?? null;
+            $coreMetrics = $metrics['metrics']['solr.core.'.$core['core']] ?? null;
             if (!is_array($coreMetrics)) {
                 continue;
             }
@@ -99,10 +102,10 @@ final class SolrMetricsDataProvider
             }
             $anyReachable = true;
 
-            $count = (int)($requestTimes['count'] ?? 0);
-            $rate1m = (float)($requestTimes['1minRate'] ?? 0.0);
-            $meanMs = (float)($requestTimes['mean_ms'] ?? 0.0);
-            $p95Ms = (float)($requestTimes['p95_ms'] ?? 0.0);
+            $count = (int) ($requestTimes['count'] ?? 0);
+            $rate1m = (float) ($requestTimes['1minRate'] ?? 0.0);
+            $meanMs = (float) ($requestTimes['mean_ms'] ?? 0.0);
+            $p95Ms = (float) ($requestTimes['p95_ms'] ?? 0.0);
 
             $totalCount += $count;
             $perMinute += $rate1m * 60.0;
@@ -162,24 +165,10 @@ final class SolrMetricsDataProvider
         $result = [];
 
         foreach ($caches as $cache) {
-            $totalLookups = 0;
-            $totalHits = 0;
-
-            foreach ($this->getCores() as $core) {
-                $metrics = $this->fetchMetrics($core['hostUri']);
-                if ($metrics === null) {
-                    continue;
-                }
-                $coreMetrics = $metrics['metrics']['solr.core.' . $core['core']][$cache['metric']] ?? null;
-                if (!is_array($coreMetrics)) {
-                    continue;
-                }
+            [$totalLookups, $totalHits, $reachable] = $this->aggregateCacheMetric($cache['metric']);
+            if ($reachable) {
                 $anyReachable = true;
-                // Prefer cumulative metrics (more stable over time) when present.
-                $totalLookups += (int)($coreMetrics['cumulative_lookups'] ?? $coreMetrics['lookups'] ?? 0);
-                $totalHits += (int)($coreMetrics['cumulative_hits'] ?? $coreMetrics['hits'] ?? 0);
             }
-
             $result[] = [
                 'label' => $cache['label'],
                 'metric' => $cache['metric'],
@@ -205,36 +194,64 @@ final class SolrMetricsDataProvider
     public function getSolrVersion(): ?string
     {
         foreach ($this->getUniqueHosts() as $hostUri) {
-            if (array_key_exists($hostUri, $this->versionCache)) {
-                if ($this->versionCache[$hostUri] !== null) {
-                    return $this->versionCache[$hostUri];
-                }
-                continue;
+            if (!array_key_exists($hostUri, $this->versionCache)) {
+                $this->versionCache[$hostUri] = $this->fetchSolrVersion($hostUri);
             }
-
-            $url = $hostUri . '/solr/admin/info/system?wt=json';
-            try {
-                $response = $this->requestFactory->request($url, 'GET', [
-                    'timeout' => 3,
-                    'connect_timeout' => 2,
-                ]);
-                if ($response->getStatusCode() !== 200) {
-                    $this->versionCache[$hostUri] = null;
-                    continue;
-                }
-                $data = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
-            } catch (\Throwable) {
-                $this->versionCache[$hostUri] = null;
-                continue;
-            }
-
-            $version = (string)($data['lucene']['solr-spec-version'] ?? $data['lucene']['solr-impl-version'] ?? '');
-            $this->versionCache[$hostUri] = $version !== '' ? $version : null;
-            if ($this->versionCache[$hostUri] !== null) {
+            if (null !== $this->versionCache[$hostUri]) {
                 return $this->versionCache[$hostUri];
             }
         }
+
         return null;
+    }
+
+    private function fetchSolrVersion(string $hostUri): ?string
+    {
+        try {
+            $response = $this->requestFactory->request($hostUri.'/solr/admin/info/system?wt=json', 'GET', [
+                'timeout' => 3,
+                'connect_timeout' => 2,
+            ]);
+            if (200 !== $response->getStatusCode()) {
+                return null;
+            }
+            $data = json_decode((string) $response->getBody(), true, 512, \JSON_THROW_ON_ERROR);
+        } catch (Throwable) {
+            return null;
+        }
+
+        $version = (string) ($data['lucene']['solr-spec-version'] ?? $data['lucene']['solr-impl-version'] ?? '');
+
+        return '' !== $version ? $version : null;
+    }
+
+    /**
+     * Sum cumulative `lookups` and `hits` for a given cache metric across all reachable cores.
+     *
+     * @return array{0: int, 1: int, 2: bool} tuple of [totalLookups, totalHits, anyReachable]
+     */
+    private function aggregateCacheMetric(string $metricKey): array
+    {
+        $totalLookups = 0;
+        $totalHits = 0;
+        $anyReachable = false;
+
+        foreach ($this->getCores() as $core) {
+            $metrics = $this->fetchMetrics($core['hostUri']);
+            if (null === $metrics) {
+                continue;
+            }
+            $coreMetrics = $metrics['metrics']['solr.core.'.$core['core']][$metricKey] ?? null;
+            if (!is_array($coreMetrics)) {
+                continue;
+            }
+            $anyReachable = true;
+            // Prefer cumulative metrics (more stable over time) when present.
+            $totalLookups += (int) ($coreMetrics['cumulative_lookups'] ?? $coreMetrics['lookups'] ?? 0);
+            $totalHits += (int) ($coreMetrics['cumulative_hits'] ?? $coreMetrics['hits'] ?? 0);
+        }
+
+        return [$totalLookups, $totalHits, $anyReachable];
     }
 
     /**
@@ -242,7 +259,7 @@ final class SolrMetricsDataProvider
      */
     private function getCores(): array
     {
-        if ($this->coresCache !== null) {
+        if (null !== $this->coresCache) {
             return $this->coresCache;
         }
 
@@ -250,7 +267,7 @@ final class SolrMetricsDataProvider
         foreach ($this->siteRepository->getAvailableSites() as $site) {
             try {
                 $connections = $this->connectionManager->getConnectionsBySite($site);
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 continue;
             }
             foreach ($connections as $connection) {
@@ -260,7 +277,7 @@ final class SolrMetricsDataProvider
                         '%s://%s:%d',
                         $endpoint->getScheme(),
                         $endpoint->getHost(),
-                        $endpoint->getPort()
+                        $endpoint->getPort(),
                     ),
                     'siteLabel' => $site->getLabel(),
                     'core' => $endpoint->getCore() ?? '',
@@ -280,6 +297,7 @@ final class SolrMetricsDataProvider
         foreach ($this->getCores() as $core) {
             $hosts[$core['hostUri']] = true;
         }
+
         return array_keys($hosts);
     }
 
@@ -292,18 +310,18 @@ final class SolrMetricsDataProvider
             return $this->metricsCache[$hostUri];
         }
 
-        $url = $hostUri . '/solr/admin/metrics?wt=json&group=jvm,core&prefix=memory.heap,QUERY./select.requestTimes,CACHE.searcher';
+        $url = $hostUri.'/solr/admin/metrics?wt=json&group=jvm,core&prefix=memory.heap,QUERY./select.requestTimes,CACHE.searcher';
 
         try {
             $response = $this->requestFactory->request($url, 'GET', [
                 'timeout' => 3,
                 'connect_timeout' => 2,
             ]);
-            if ($response->getStatusCode() !== 200) {
+            if (200 !== $response->getStatusCode()) {
                 return $this->metricsCache[$hostUri] = null;
             }
-            $data = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (\Throwable) {
+            $data = json_decode((string) $response->getBody(), true, 512, \JSON_THROW_ON_ERROR);
+        } catch (Throwable) {
             return $this->metricsCache[$hostUri] = null;
         }
 

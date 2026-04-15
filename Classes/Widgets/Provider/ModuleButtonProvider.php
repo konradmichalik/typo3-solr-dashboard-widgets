@@ -13,28 +13,29 @@ declare(strict_types=1);
 
 namespace KonradMichalik\SolrDashboardWidgets\Widgets\Provider;
 
+use Throwable;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
 
+use function is_array;
+
 /**
- * Button provider that links to a TYPO3 backend module via its route identifier.
+ * ModuleButtonProvider.
  *
- * Accepts one or more route identifiers; the first resolvable one wins. This
- * lets us declare a single service for both current and legacy TYPO3 versions
- * (e.g. v14 `scheduler` vs. v13 `scheduler_manage`).
+ * @author Konrad Michalik <hej@konradmichalik.dev>
  */
-final class ModuleButtonProvider implements ButtonProviderInterface
+final readonly class ModuleButtonProvider implements ButtonProviderInterface
 {
     /** @var list<string> */
-    private readonly array $routeIdentifiers;
+    private array $routeIdentifiers;
 
     /**
      * @param string|list<string> $routeIdentifiers
      */
     public function __construct(
-        private readonly BackendUriBuilder $uriBuilder,
+        private BackendUriBuilder $uriBuilder,
         string|array $routeIdentifiers,
-        private readonly string $title,
+        private string $title,
     ) {
         $this->routeIdentifiers = is_array($routeIdentifiers) ? $routeIdentifiers : [$routeIdentifiers];
     }
@@ -48,8 +49,8 @@ final class ModuleButtonProvider implements ButtonProviderInterface
     {
         foreach ($this->routeIdentifiers as $identifier) {
             try {
-                return (string)$this->uriBuilder->buildUriFromRoute($identifier);
-            } catch (\Throwable) {
+                return (string) $this->uriBuilder->buildUriFromRoute($identifier);
+            } catch (Throwable) {
                 continue;
             }
         }

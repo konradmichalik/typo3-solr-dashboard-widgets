@@ -13,25 +13,30 @@ declare(strict_types=1);
 
 namespace KonradMichalik\SolrDashboardWidgets\DataProvider;
 
-use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Database\ConnectionPool;
+use Throwable;
+use TYPO3\CMS\Core\Database\{Connection, ConnectionPool};
 
-final class SearchStatisticsDataProvider
+/**
+ * SearchStatisticsDataProvider.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
+final readonly class SearchStatisticsDataProvider
 {
     private const TABLE = 'tx_solr_statistics';
 
     public function __construct(
-        private readonly ConnectionPool $connectionPool,
+        private ConnectionPool $connectionPool,
     ) {}
 
     public function isTableAvailable(): bool
     {
         try {
-            $connection = $this->connectionPool->getConnectionForTable(self::TABLE);
-            $tableNames = $connection->createSchemaManager()->listTableNames();
-
-            return in_array(self::TABLE, $tableNames, true);
-        } catch (\Throwable) {
+            return $this->connectionPool
+                ->getConnectionForTable(self::TABLE)
+                ->createSchemaManager()
+                ->tablesExist([self::TABLE]);
+        } catch (Throwable) {
             return false;
         }
     }
@@ -66,17 +71,25 @@ final class SearchStatisticsDataProvider
         $since = time() - ($days * 86400);
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
 
-        return $queryBuilder
+        $rows = $queryBuilder
             ->selectLiteral('DATE(FROM_UNIXTIME(tstamp)) AS day')
             ->addSelectLiteral($queryBuilder->expr()->count('*', 'cnt'))
             ->from(self::TABLE)
             ->where(
-                $queryBuilder->expr()->gt('tstamp', $queryBuilder->createNamedParameter($since, Connection::PARAM_INT))
+                $queryBuilder->expr()->gt('tstamp', $queryBuilder->createNamedParameter($since, Connection::PARAM_INT)),
             )
             ->groupBy('day')
             ->orderBy('day', 'ASC')
             ->executeQuery()
             ->fetchAllAssociative();
+
+        return array_map(
+            static fn (array $row): array => [
+                'day' => (string) $row['day'],
+                'cnt' => (int) $row['cnt'],
+            ],
+            $rows,
+        );
     }
 
     /**
@@ -86,7 +99,7 @@ final class SearchStatisticsDataProvider
     {
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
 
-        return $queryBuilder
+        $rows = $queryBuilder
             ->select('keywords')
             ->addSelectLiteral($queryBuilder->expr()->count('*', 'cnt'))
             ->from(self::TABLE)
@@ -94,13 +107,21 @@ final class SearchStatisticsDataProvider
                 $queryBuilder->expr()->gt('tstamp', $queryBuilder->createNamedParameter($since, Connection::PARAM_INT)),
                 $withHits
                     ? $queryBuilder->expr()->gt('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT))
-                    : $queryBuilder->expr()->eq('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT))
+                    : $queryBuilder->expr()->eq('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT)),
             )
             ->groupBy('keywords')
             ->orderBy('cnt', 'DESC')
             ->setMaxResults($limit)
             ->executeQuery()
             ->fetchAllAssociative();
+
+        return array_map(
+            static fn (array $row): array => [
+                'keywords' => (string) $row['keywords'],
+                'cnt' => (int) $row['cnt'],
+            ],
+            $rows,
+        );
     }
 
     private function countSearches(int $since, bool $withHits): int
@@ -115,25 +136,26 @@ final class SearchStatisticsDataProvider
                 $queryBuilder->expr()->gt('tstamp', $queryBuilder->createNamedParameter($since, Connection::PARAM_INT)),
                 $withHits
                     ? $queryBuilder->expr()->gt('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT))
-                    : $queryBuilder->expr()->eq('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT))
+                    : $queryBuilder->expr()->eq('num_found', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT)),
             )
             ->executeQuery()
             ->fetchAssociative();
 
-        return $row === false ? 0 : (int)$row['cnt'];
+        return false === $row ? 0 : (int) $row['cnt'];
     }
 
     /**
      * @param list<array{keywords: string, cnt: int}> $rows
+     *
      * @return list<array{keywords: string, cnt: int, percent: float}>
      */
     private function attachPercentages(array $rows, int $total): array
     {
         return array_map(
             static fn (array $row): array => [
-                'keywords' => (string)$row['keywords'],
-                'cnt' => (int)$row['cnt'],
-                'percent' => $total > 0 ? ((int)$row['cnt'] / $total) * 100.0 : 0.0,
+                'keywords' => $row['keywords'],
+                'cnt' => $row['cnt'],
+                'percent' => $total > 0 ? ($row['cnt'] / $total) * 100.0 : 0.0,
             ],
             $rows,
         );

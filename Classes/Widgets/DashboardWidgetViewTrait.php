@@ -14,20 +14,13 @@ declare(strict_types=1);
 namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\View\ViewFactoryData;
-use TYPO3\CMS\Core\View\ViewFactoryInterface;
-use TYPO3\CMS\Core\View\ViewInterface;
-use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
+use TYPO3\CMS\Core\View\{ViewFactoryData, ViewFactoryInterface, ViewInterface};
+use TYPO3\CMS\Dashboard\Widgets\{ButtonProviderInterface, WidgetConfigurationInterface};
 
 /**
- * Shared view creation for Solr Dashboard widgets.
+ * DashboardWidgetViewTrait.
  *
- * Every widget needs the same combination of its own template root, TYPO3
- * Dashboard's partials (for the footer Button partial) and layouts (for the
- * Widget/Widget layout). Consumers hand in their request, button provider and
- * configuration; the trait assumes a readonly `$viewFactory` property on the
- * using class.
+ * @author Konrad Michalik <hej@konradmichalik.dev>
  */
 trait DashboardWidgetViewTrait
 {
@@ -45,6 +38,7 @@ trait DashboardWidgetViewTrait
         ));
         $view->assign('button', $buttonProvider);
         $view->assign('configuration', $configuration);
+
         return $view;
     }
 }

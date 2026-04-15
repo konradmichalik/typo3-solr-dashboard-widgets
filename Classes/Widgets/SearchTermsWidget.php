@@ -16,12 +16,13 @@ namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 use KonradMichalik\SolrDashboardWidgets\DataProvider\SearchStatisticsDataProvider;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
-use TYPO3\CMS\Dashboard\Widgets\AdditionalCssInterface;
-use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
-use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
+use TYPO3\CMS\Dashboard\Widgets\{AdditionalCssInterface, ButtonProviderInterface, RequestAwareWidgetInterface, WidgetConfigurationInterface, WidgetInterface};
 
+/**
+ * SearchTermsWidget.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
 final class SearchTermsWidget implements WidgetInterface, RequestAwareWidgetInterface, AdditionalCssInterface
 {
     use DashboardWidgetViewTrait;
@@ -50,14 +51,16 @@ final class SearchTermsWidget implements WidgetInterface, RequestAwareWidgetInte
 
         if (!$this->dataProvider->isTableAvailable()) {
             $view->assign('noData', true);
+
             return $view->render('Widget/SearchTerms');
         }
 
         $topTerms = $this->dataProvider->getTopSearchTerms(self::WINDOW_DAYS, self::TOP_LIMIT);
         $noHitQueries = $this->dataProvider->getNoHitQueries(self::WINDOW_DAYS, self::NOHIT_LIMIT);
 
-        if ($topTerms === [] && $noHitQueries === []) {
+        if ([] === $topTerms && [] === $noHitQueries) {
             $view->assign('noData', true);
+
             return $view->render('Widget/SearchTerms');
         }
 
@@ -68,11 +71,17 @@ final class SearchTermsWidget implements WidgetInterface, RequestAwareWidgetInte
         return $view->render('Widget/SearchTerms');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getOptions(): array
     {
         return [];
     }
 
+    /**
+     * @return list<string>
+     */
     public function getCssFiles(): array
     {
         return ['EXT:typo3_solr_dashboard_widgets/Resources/Public/Css/typo3_solr_dashboard_widgets.css'];

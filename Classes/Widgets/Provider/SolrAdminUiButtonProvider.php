@@ -15,23 +15,22 @@ namespace KonradMichalik\SolrDashboardWidgets\Widgets\Provider;
 
 use ApacheSolrForTypo3\Solr\ConnectionManager;
 use ApacheSolrForTypo3\Solr\Domain\Site\SiteRepository;
+use Throwable;
 use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
 
+use function sprintf;
+
 /**
- * Button provider linking to the Solr admin UI (`{scheme}://{host}:{port}/solr/`),
- * derived from the first configured Solr connection.
+ * SolrAdminUiButtonProvider.
  *
- * Note: the host/port come from EXT:solr's site configuration (typically the
- * TYPO3 server's view of Solr). If Solr sits behind an internal-only hostname
- * the link will not be reachable from the user's browser — that's an
- * infrastructure concern, not something this provider can resolve.
+ * @author Konrad Michalik <hej@konradmichalik.dev>
  */
-final class SolrAdminUiButtonProvider implements ButtonProviderInterface
+final readonly class SolrAdminUiButtonProvider implements ButtonProviderInterface
 {
     public function __construct(
-        private readonly SiteRepository $siteRepository,
-        private readonly ConnectionManager $connectionManager,
-        private readonly string $title,
+        private SiteRepository $siteRepository,
+        private ConnectionManager $connectionManager,
+        private string $title,
     ) {}
 
     public function getTitle(): string
@@ -44,19 +43,21 @@ final class SolrAdminUiButtonProvider implements ButtonProviderInterface
         foreach ($this->siteRepository->getAvailableSites() as $site) {
             try {
                 $connections = $this->connectionManager->getConnectionsBySite($site);
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 continue;
             }
             foreach ($connections as $connection) {
                 $endpoint = $connection->getEndpoint('read');
+
                 return sprintf(
                     '%s://%s:%d/solr/',
                     $endpoint->getScheme(),
                     $endpoint->getHost(),
-                    $endpoint->getPort()
+                    $endpoint->getPort(),
                 );
             }
         }
+
         return '';
     }
 

@@ -17,14 +17,13 @@ use KonradMichalik\SolrDashboardWidgets\DataProvider\SolrMetricsDataProvider;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
-use TYPO3\CMS\Dashboard\Widgets\AdditionalCssInterface;
-use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
-use TYPO3\CMS\Dashboard\Widgets\EventDataInterface;
-use TYPO3\CMS\Dashboard\Widgets\JavaScriptInterface;
-use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
+use TYPO3\CMS\Dashboard\Widgets\{AdditionalCssInterface, ButtonProviderInterface, EventDataInterface, JavaScriptInterface, RequestAwareWidgetInterface, WidgetConfigurationInterface, WidgetInterface};
 
+/**
+ * SolrHealthWidget.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
 final class SolrHealthWidget implements WidgetInterface, JavaScriptInterface, RequestAwareWidgetInterface, EventDataInterface, AdditionalCssInterface
 {
     use DashboardWidgetViewTrait;
@@ -50,20 +49,23 @@ final class SolrHealthWidget implements WidgetInterface, JavaScriptInterface, Re
 
         $view = $this->createDashboardView($this->viewFactory, $this->request, $this->buttonProvider, $this->configuration);
         $view->assign('memory', $memory);
-        $view->assign('usedMb', $memory !== null ? (int)round($memory['usedBytes'] / 1024 / 1024) : 0);
-        $view->assign('maxMb', $memory !== null ? (int)round($memory['maxBytes'] / 1024 / 1024) : 0);
-        $view->assign('usedPercent', $memory !== null ? (int)round($memory['usedPercent']) : 0);
+        $view->assign('usedMb', null !== $memory ? (int) round($memory['usedBytes'] / 1024 / 1024) : 0);
+        $view->assign('maxMb', null !== $memory ? (int) round($memory['maxBytes'] / 1024 / 1024) : 0);
+        $view->assign('usedPercent', null !== $memory ? (int) round($memory['usedPercent']) : 0);
         $view->assign('performance', $performance);
         $view->assign('solrVersion', $this->metricsProvider->getSolrVersion() ?? '');
 
         return $view->render('Widget/SolrHealth');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getEventData(): array
     {
         $memory = $this->metricsProvider->getJvmMemory();
 
-        if ($memory === null) {
+        if (null === $memory) {
             return [
                 'graphConfig' => [
                     'type' => 'doughnut',
@@ -111,11 +113,17 @@ final class SolrHealthWidget implements WidgetInterface, JavaScriptInterface, Re
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getOptions(): array
     {
         return [];
     }
 
+    /**
+     * @return list<string>
+     */
     public function getCssFiles(): array
     {
         return ['EXT:typo3_solr_dashboard_widgets/Resources/Public/Css/typo3_solr_dashboard_widgets.css'];

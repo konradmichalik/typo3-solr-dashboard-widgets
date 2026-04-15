@@ -15,12 +15,18 @@ namespace KonradMichalik\SolrDashboardWidgets\DataProvider;
 
 use ApacheSolrForTypo3\Solr\ConnectionManager;
 use ApacheSolrForTypo3\Solr\Domain\Site\SiteRepository;
+use Throwable;
 
-final class ConnectionStatusDataProvider
+/**
+ * ConnectionStatusDataProvider.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
+final readonly class ConnectionStatusDataProvider
 {
     public function __construct(
-        private readonly SiteRepository $siteRepository,
-        private readonly ConnectionManager $connectionManager,
+        private SiteRepository $siteRepository,
+        private ConnectionManager $connectionManager,
     ) {}
 
     /**
@@ -39,7 +45,7 @@ final class ConnectionStatusDataProvider
         foreach ($this->siteRepository->getAvailableSites() as $site) {
             try {
                 $siteConnections = $this->connectionManager->getConnectionsBySite($site);
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 continue;
             }
 
@@ -52,7 +58,7 @@ final class ConnectionStatusDataProvider
 
                 try {
                     $reachable = $connection->getReadService()->ping();
-                } catch (\Throwable) {
+                } catch (Throwable) {
                 }
 
                 if ($reachable) {
@@ -60,8 +66,8 @@ final class ConnectionStatusDataProvider
                 }
 
                 $cores[] = [
-                    'host' => $endpoint->getHost(),
-                    'port' => $endpoint->getPort(),
+                    'host' => $endpoint->getHost() ?? '',
+                    'port' => $endpoint->getPort() ?? 0,
                     'core' => $endpoint->getCore() ?? '',
                     'reachable' => $reachable,
                 ];

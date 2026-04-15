@@ -17,13 +17,13 @@ use KonradMichalik\SolrDashboardWidgets\DataProvider\SearchStatisticsDataProvide
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
-use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
-use TYPO3\CMS\Dashboard\Widgets\EventDataInterface;
-use TYPO3\CMS\Dashboard\Widgets\JavaScriptInterface;
-use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
+use TYPO3\CMS\Dashboard\Widgets\{ButtonProviderInterface, EventDataInterface, JavaScriptInterface, RequestAwareWidgetInterface, WidgetConfigurationInterface, WidgetInterface};
 
+/**
+ * SearchVolumeWidget.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
 final class SearchVolumeWidget implements WidgetInterface, JavaScriptInterface, RequestAwareWidgetInterface, EventDataInterface
 {
     use DashboardWidgetViewTrait;
@@ -50,13 +50,15 @@ final class SearchVolumeWidget implements WidgetInterface, JavaScriptInterface, 
 
         if (!$this->dataProvider->isTableAvailable()) {
             $view->assign('noData', true);
+
             return $view->render('Widget/SearchVolume');
         }
 
         $volumePerDay = $this->dataProvider->getSearchVolumePerDay(self::DAYS);
 
-        if ($volumePerDay === []) {
+        if ([] === $volumePerDay) {
             $view->assign('noData', true);
+
             return $view->render('Widget/SearchVolume');
         }
 
@@ -65,6 +67,9 @@ final class SearchVolumeWidget implements WidgetInterface, JavaScriptInterface, 
         return $view->render('Widget/SearchVolume');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getEventData(): array
     {
         if (!$this->dataProvider->isTableAvailable()) {
@@ -73,7 +78,7 @@ final class SearchVolumeWidget implements WidgetInterface, JavaScriptInterface, 
 
         $volumePerDay = $this->dataProvider->getSearchVolumePerDay(self::DAYS);
 
-        if ($volumePerDay === []) {
+        if ([] === $volumePerDay) {
             return ['graphConfig' => $this->emptyChart()];
         }
 
@@ -93,11 +98,14 @@ final class SearchVolumeWidget implements WidgetInterface, JavaScriptInterface, 
                     ],
                 ],
                 'data' => [
-                    'labels' => array_map(static fn (array $row): string => date('M d', strtotime($row['day'])), $volumePerDay),
+                    'labels' => array_map(
+                        static fn (array $row): string => date('M d', strtotime($row['day']) ?: 0),
+                        $volumePerDay,
+                    ),
                     'datasets' => [
                         [
                             'label' => 'Searches',
-                            'data' => array_map(static fn (array $row): int => (int)$row['cnt'], $volumePerDay),
+                            'data' => array_map(static fn (array $row): int => $row['cnt'], $volumePerDay),
                             'borderColor' => '#f49700',
                             'backgroundColor' => 'rgba(244, 151, 0, 0.15)',
                             'fill' => true,
@@ -119,6 +127,9 @@ final class SearchVolumeWidget implements WidgetInterface, JavaScriptInterface, 
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getOptions(): array
     {
         return [];

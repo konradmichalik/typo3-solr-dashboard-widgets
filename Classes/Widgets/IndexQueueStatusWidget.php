@@ -17,13 +17,13 @@ use KonradMichalik\SolrDashboardWidgets\DataProvider\IndexQueueDataProvider;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
-use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
-use TYPO3\CMS\Dashboard\Widgets\EventDataInterface;
-use TYPO3\CMS\Dashboard\Widgets\JavaScriptInterface;
-use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
+use TYPO3\CMS\Dashboard\Widgets\{ButtonProviderInterface, EventDataInterface, JavaScriptInterface, RequestAwareWidgetInterface, WidgetConfigurationInterface, WidgetInterface};
 
+/**
+ * IndexQueueStatusWidget.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
 final class IndexQueueStatusWidget implements WidgetInterface, JavaScriptInterface, RequestAwareWidgetInterface, EventDataInterface
 {
     use DashboardWidgetViewTrait;
@@ -53,6 +53,9 @@ final class IndexQueueStatusWidget implements WidgetInterface, JavaScriptInterfa
         return $view->render('Widget/IndexQueueStatus');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getEventData(): array
     {
         $status = $this->dataProvider->getQueueStatus();
@@ -92,6 +95,9 @@ final class IndexQueueStatusWidget implements WidgetInterface, JavaScriptInterfa
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getOptions(): array
     {
         return [];

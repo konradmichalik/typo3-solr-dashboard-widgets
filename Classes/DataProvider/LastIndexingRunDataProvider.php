@@ -15,14 +15,19 @@ namespace KonradMichalik\SolrDashboardWidgets\DataProvider;
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
-final class LastIndexingRunDataProvider
+/**
+ * LastIndexingRunDataProvider.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
+final readonly class LastIndexingRunDataProvider
 {
     private const TABLE = 'tx_scheduler_task';
     private const WARNING_THRESHOLD = 3600;
     private const ERROR_THRESHOLD = 86400;
 
     public function __construct(
-        private readonly ConnectionPool $connectionPool,
+        private ConnectionPool $connectionPool,
     ) {}
 
     /**
@@ -38,20 +43,20 @@ final class LastIndexingRunDataProvider
             ->where(
                 $queryBuilder->expr()->like(
                     'serialized_task_object',
-                    $queryBuilder->createNamedParameter('%Solr%')
-                )
+                    $queryBuilder->createNamedParameter('%Solr%'),
+                ),
             )
             ->orderBy('lastexecution_time', 'DESC')
             ->setMaxResults(1)
             ->executeQuery()
             ->fetchAssociative();
 
-        if ($row === false) {
+        if (false === $row) {
             return null;
         }
 
         return [
-            'timestamp' => (int)$row['lastexecution_time'],
+            'timestamp' => (int) $row['lastexecution_time'],
         ];
     }
 
@@ -70,22 +75,22 @@ final class LastIndexingRunDataProvider
             ->where(
                 $queryBuilder->expr()->like(
                     'serialized_task_object',
-                    $queryBuilder->createNamedParameter('%Solr%')
+                    $queryBuilder->createNamedParameter('%Solr%'),
                 ),
                 $queryBuilder->expr()->eq('disable', $queryBuilder->createNamedParameter(0, \TYPO3\CMS\Core\Database\Connection::PARAM_INT)),
-                $queryBuilder->expr()->gt('nextexecution', $queryBuilder->createNamedParameter(0, \TYPO3\CMS\Core\Database\Connection::PARAM_INT))
+                $queryBuilder->expr()->gt('nextexecution', $queryBuilder->createNamedParameter(0, \TYPO3\CMS\Core\Database\Connection::PARAM_INT)),
             )
             ->orderBy('nextexecution', 'ASC')
             ->setMaxResults(1)
             ->executeQuery()
             ->fetchAssociative();
 
-        if ($row === false) {
+        if (false === $row) {
             return null;
         }
 
         return [
-            'timestamp' => (int)$row['nextexecution'],
+            'timestamp' => (int) $row['nextexecution'],
         ];
     }
 
@@ -98,18 +103,18 @@ final class LastIndexingRunDataProvider
         }
 
         if ($diff < 60) {
-            return 'in ' . $diff . ' seconds';
+            return 'in '.$diff.' seconds';
         }
 
         if ($diff < 3600) {
-            return 'in ' . (int)($diff / 60) . ' minutes';
+            return 'in '.(int) ($diff / 60).' minutes';
         }
 
         if ($diff < 86400) {
-            return 'in ' . (int)($diff / 3600) . ' hours';
+            return 'in '.(int) ($diff / 3600).' hours';
         }
 
-        return 'in ' . (int)($diff / 86400) . ' days';
+        return 'in '.(int) ($diff / 86400).' days';
     }
 
     public function getStatus(int $timestamp): string
@@ -132,17 +137,17 @@ final class LastIndexingRunDataProvider
         $diff = time() - $timestamp;
 
         if ($diff < 60) {
-            return $diff . ' seconds';
+            return $diff.' seconds';
         }
 
         if ($diff < 3600) {
-            return (int)($diff / 60) . ' minutes';
+            return (int) ($diff / 60).' minutes';
         }
 
         if ($diff < 86400) {
-            return (int)($diff / 3600) . ' hours';
+            return (int) ($diff / 3600).' hours';
         }
 
-        return (int)($diff / 86400) . ' days';
+        return (int) ($diff / 86400).' days';
     }
 }

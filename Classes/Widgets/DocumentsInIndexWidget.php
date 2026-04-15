@@ -17,13 +17,13 @@ use KonradMichalik\SolrDashboardWidgets\DataProvider\DocumentsInIndexDataProvide
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
-use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
-use TYPO3\CMS\Dashboard\Widgets\EventDataInterface;
-use TYPO3\CMS\Dashboard\Widgets\JavaScriptInterface;
-use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
+use TYPO3\CMS\Dashboard\Widgets\{ButtonProviderInterface, EventDataInterface, JavaScriptInterface, RequestAwareWidgetInterface, WidgetConfigurationInterface, WidgetInterface};
 
+/**
+ * DocumentsInIndexWidget.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
 final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterface, RequestAwareWidgetInterface, EventDataInterface
 {
     use DashboardWidgetViewTrait;
@@ -54,6 +54,9 @@ final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterfa
         return $view->render('Widget/DocumentsInIndex');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getEventData(): array
     {
         $result = $this->dataProvider->getDocumentCountsByType();
@@ -96,6 +99,9 @@ final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterfa
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getOptions(): array
     {
         return [];

@@ -16,12 +16,13 @@ namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 use KonradMichalik\SolrDashboardWidgets\DataProvider\SolrMetricsDataProvider;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
-use TYPO3\CMS\Dashboard\Widgets\AdditionalCssInterface;
-use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
-use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
+use TYPO3\CMS\Dashboard\Widgets\{AdditionalCssInterface, ButtonProviderInterface, RequestAwareWidgetInterface, WidgetConfigurationInterface, WidgetInterface};
 
+/**
+ * CacheHitRatesWidget.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
 final class CacheHitRatesWidget implements WidgetInterface, RequestAwareWidgetInterface, AdditionalCssInterface
 {
     use DashboardWidgetViewTrait;
@@ -50,11 +51,17 @@ final class CacheHitRatesWidget implements WidgetInterface, RequestAwareWidgetIn
         return $view->render('Widget/CacheHitRates');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getOptions(): array
     {
         return [];
     }
 
+    /**
+     * @return list<string>
+     */
     public function getCssFiles(): array
     {
         return ['EXT:typo3_solr_dashboard_widgets/Resources/Public/Css/typo3_solr_dashboard_widgets.css'];

@@ -16,11 +16,13 @@ namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 use KonradMichalik\SolrDashboardWidgets\DataProvider\LastIndexingRunDataProvider;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
-use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
-use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
-use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
+use TYPO3\CMS\Dashboard\Widgets\{ButtonProviderInterface, RequestAwareWidgetInterface, WidgetConfigurationInterface, WidgetInterface};
 
+/**
+ * LastIndexingRunWidget.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
 final class LastIndexingRunWidget implements WidgetInterface, RequestAwareWidgetInterface
 {
     use DashboardWidgetViewTrait;
@@ -46,7 +48,7 @@ final class LastIndexingRunWidget implements WidgetInterface, RequestAwareWidget
         $view = $this->createDashboardView($this->viewFactory, $this->request, $this->buttonProvider, $this->configuration);
         $view->assign('lastRun', $lastRun);
 
-        if ($lastRun !== null) {
+        if (null !== $lastRun) {
             $status = $this->dataProvider->getStatus($lastRun['timestamp']);
             $view->assign('status', $status);
             $view->assign('boxState', match ($status) {
@@ -60,13 +62,16 @@ final class LastIndexingRunWidget implements WidgetInterface, RequestAwareWidget
 
         $nextRun = $this->dataProvider->getNextRun();
         $view->assign('nextRun', $nextRun);
-        if ($nextRun !== null) {
+        if (null !== $nextRun) {
             $view->assign('nextRunEta', $this->dataProvider->getHumanReadableEta($nextRun['timestamp']));
         }
 
         return $view->render('Widget/LastIndexingRun');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getOptions(): array
     {
         return [];

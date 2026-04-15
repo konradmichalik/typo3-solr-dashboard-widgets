@@ -13,15 +13,19 @@ declare(strict_types=1);
 
 namespace KonradMichalik\SolrDashboardWidgets\DataProvider;
 
-use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\{Connection, ConnectionPool};
 
-final class IndexQueueDataProvider
+/**
+ * IndexQueueDataProvider.
+ *
+ * @author Konrad Michalik <hej@konradmichalik.dev>
+ */
+final readonly class IndexQueueDataProvider
 {
     private const TABLE = 'tx_solr_indexqueue_item';
 
     public function __construct(
-        private readonly ConnectionPool $connectionPool,
+        private ConnectionPool $connectionPool,
     ) {}
 
     /**
@@ -36,9 +40,9 @@ final class IndexQueueDataProvider
             ->from(self::TABLE)
             ->groupBy('indexed', 'errors');
 
-        if ($rootPageId !== null) {
+        if (null !== $rootPageId) {
             $queryBuilder->andWhere(
-                $queryBuilder->expr()->eq('root', $queryBuilder->createNamedParameter($rootPageId, Connection::PARAM_INT))
+                $queryBuilder->expr()->eq('root', $queryBuilder->createNamedParameter($rootPageId, Connection::PARAM_INT)),
             );
         }
 
@@ -49,10 +53,10 @@ final class IndexQueueDataProvider
         $failed = 0;
 
         foreach ($rows as $row) {
-            $count = (int)$row['cnt'];
-            if ($row['errors'] !== '') {
+            $count = (int) $row['cnt'];
+            if ('' !== $row['errors']) {
                 $failed += $count;
-            } elseif ((int)$row['indexed'] > 0) {
+            } elseif ((int) $row['indexed'] > 0) {
                 $indexed += $count;
             } else {
                 $pending += $count;
@@ -73,7 +77,7 @@ final class IndexQueueDataProvider
     {
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
 
-        return $queryBuilder
+        $rows = $queryBuilder
             ->select('item_type', 'item_uid', 'errors', 'changed')
             ->from(self::TABLE)
             ->where($queryBuilder->expr()->neq('errors', $queryBuilder->createNamedParameter('')))
@@ -81,6 +85,15 @@ final class IndexQueueDataProvider
             ->setMaxResults($limit)
             ->executeQuery()
             ->fetchAllAssociative();
-    }
 
+        return array_map(
+            static fn (array $row): array => [
+                'item_type' => (string) $row['item_type'],
+                'item_uid' => (int) $row['item_uid'],
+                'errors' => (string) $row['errors'],
+                'changed' => (int) $row['changed'],
+            ],
+            $rows,
+        );
+    }
 }
