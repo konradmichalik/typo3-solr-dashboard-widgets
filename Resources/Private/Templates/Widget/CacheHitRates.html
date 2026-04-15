@@ -1,0 +1,44 @@
+<html data-namespace-typo3-fluid="true"
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+<f:layout name="Widget/Widget" />
+
+<f:section name="main">
+    <f:if condition="{rates.reachable}">
+        <f:then>
+            <ul class="list-unstyled mb-0">
+                <f:for each="{rates.caches}" as="cache">
+                    <li class="mb-3">
+                        <div class="d-flex justify-content-between align-items-baseline mb-1">
+                            <span class="small fw-bold">{cache.label}</span>
+                            <span class="badge solr-widget-badge solr-widget-badge--info rounded-pill">
+                                <f:format.number decimals="1">{cache.hitRatio}</f:format.number> %
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar"
+                                 role="progressbar"
+                                 style="width: {cache.hitRatio}%; background-color: #4ba2b3;"
+                                 aria-valuenow="{cache.hitRatio}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100"></div>
+                        </div>
+                        <div class="text-muted small mt-1">
+                            <f:format.number decimals="0" thousandsSeparator=".">{cache.hits}</f:format.number>
+                            /
+                            <f:format.number decimals="0" thousandsSeparator=".">{cache.lookups}</f:format.number>
+                            lookups
+                        </div>
+                    </li>
+                </f:for>
+            </ul>
+        </f:then>
+        <f:else>
+            <f:be.infobox title="No data" state="-1">Solr metrics endpoint unreachable.</f:be.infobox>
+        </f:else>
+    </f:if>
+</f:section>
+
+<f:section name="footer">
+    <f:render partial="Widget/Button" arguments="{button: button}"/>
+</f:section>
+</html>
