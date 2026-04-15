@@ -6,7 +6,7 @@ services:
             - EXTENSION_NAME=solr-dashboard-widgets
             - PACKAGE_NAME=konradmichalik/solr-dashboard-widgets
             # v14 requires EXT:solr 14.0.0-alpha1+ (minimum-stability alpha)
-            - TYPO3_VERSIONS=12 13 14
+            - TYPO3_VERSIONS=13 14
             - SYMLINK_EXCLUSIONS=.* Documentation Documentation-GENERATED-temp var vendor public
 
             # TYPO3 v11 and v12 config

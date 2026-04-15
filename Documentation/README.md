@@ -6,7 +6,7 @@ A TYPO3 extension providing 6 backend dashboard widgets for Apache Solr (EXT:sol
 
 | Extension | TYPO3       | PHP        | EXT:solr    |
 |-----------|-------------|------------|-------------|
-| 1.x       | 12.4 – 14.x | 8.2 – 8.5  | 12.x – 13.x |
+| 1.x       | 13.4 – 14.x | 8.2 – 8.5  | 13.x – 14.x |
 
 ## Installation
 
@@ -65,7 +65,7 @@ The extension ships with a **"Solr Overview"** dashboard preset that includes al
 
 ## Notes
 
-The `ext_emconf.php` file is deprecated as of TYPO3 v14 but is kept in this extension for compatibility with TYPO3 v12 and v13.
+The `ext_emconf.php` file is deprecated as of TYPO3 v14 but is kept in this extension for compatibility with TYPO3 v13.
 
 ## License
 

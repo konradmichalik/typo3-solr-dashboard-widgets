@@ -2,7 +2,6 @@ type: php
 docroot: .Build
 webserver_type: apache-fpm
 additional_hostnames:
-  - 12.solr-dashboard-widgets
   - 13.solr-dashboard-widgets
   - 14.solr-dashboard-widgets
 hooks:

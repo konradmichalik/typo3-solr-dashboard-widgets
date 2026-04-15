@@ -14,15 +14,15 @@
 	],
 	"require": {
 		"php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
-		"apache-solr-for-typo3/solr": "^12.0 || ^13.0 || ^14.0@alpha",
-		"typo3/cms-core": "^12.0 || ^13.0 || ^14.0",
-		"typo3/cms-dashboard": "^12.0 || ^13.0 || ^14.0"
+		"apache-solr-for-typo3/solr": "^13.0 || ^14.0@alpha",
+		"typo3/cms-core": "^13.0 || ^14.0",
+		"typo3/cms-dashboard": "^13.0 || ^14.0"
 	},
 	"require-dev": {
 		"eliashaeussler/version-bumper": "^2.4 || ^3.0",
-		"phpunit/phpcov": "^9.0 || ^10.0 || ^11.0",
-		"phpunit/phpunit": "^10.2 || ^11.0 || ^12.0",
-		"typo3/cms-base-distribution": "^12.4 || ^13.4 || ^14.0"
+		"phpunit/phpcov": "^10.0 || ^11.0",
+		"phpunit/phpunit": "^11.0 || ^12.0",
+		"typo3/cms-base-distribution": "^13.4 || ^14.0"
 	},
 	"autoload": {
 		"psr-4": {
