@@ -1,6 +1,6 @@
 services:
   solr:
-    image: apache/solr:9.7
+    image: solr:9.7
     container_name: ddev-${DDEV_SITENAME}-solr
     ports:
       - "8983"
