@@ -16,21 +16,25 @@ namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 use KonradMichalik\SolrDashboardWidgets\DataProvider\DocumentsInIndexDataProvider;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
-use TYPO3\CMS\Core\View\ViewFactoryData;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
+use TYPO3\CMS\Dashboard\Widgets\EventDataInterface;
 use TYPO3\CMS\Dashboard\Widgets\JavaScriptInterface;
 use TYPO3\CMS\Dashboard\Widgets\RequestAwareWidgetInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
 
-final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterface, RequestAwareWidgetInterface
+final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterface, RequestAwareWidgetInterface, EventDataInterface
 {
+    use DashboardWidgetViewTrait;
+
     private ServerRequestInterface $request;
 
     public function __construct(
         private readonly WidgetConfigurationInterface $configuration,
         private readonly DocumentsInIndexDataProvider $dataProvider,
         private readonly ViewFactoryInterface $viewFactory,
+        private readonly ?ButtonProviderInterface $buttonProvider = null,
     ) {}
 
     public function setRequest(ServerRequestInterface $request): void
@@ -40,21 +44,54 @@ final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterfa
 
     public function renderWidgetContent(): string
     {
-        $documentCounts = $this->dataProvider->getDocumentCounts();
+        $result = $this->dataProvider->getDocumentCountsByType();
 
-        $view = $this->viewFactory->create(new ViewFactoryData(
-            templateRootPaths: ['EXT:solr_dashboard_widgets/Resources/Private/Templates/'],
-            request: $this->request,
-        ));
-        $view->assign('chartData', json_encode($this->getChartData($documentCounts), JSON_THROW_ON_ERROR));
-        $view->assign('configuration', $this->configuration);
+        $view = $this->createDashboardView($this->viewFactory, $this->request, $this->buttonProvider, $this->configuration);
+        $view->assign('reachable', $result['reachable']);
+        $view->assign('totalDocuments', $result['total']);
+        $view->assign('byType', $result['byType']);
 
         return $view->render('Widget/DocumentsInIndex');
+    }
+
+    public function getEventData(): array
+    {
+        $result = $this->dataProvider->getDocumentCountsByType();
+
+        return [
+            'graphConfig' => [
+                'type' => 'bar',
+                'options' => [
+                    'maintainAspectRatio' => false,
+                    'plugins' => [
+                        'legend' => ['display' => false],
+                    ],
+                    'scales' => [
+                        'y' => [
+                            'beginAtZero' => true,
+                            'ticks' => ['precision' => 0],
+                        ],
+                    ],
+                ],
+                'data' => [
+                    'labels' => array_map(static fn (array $row): string => $row['type'], $result['byType']),
+                    'datasets' => [
+                        [
+                            'label' => 'Documents',
+                            'data' => array_map(static fn (array $row): int => $row['count'], $result['byType']),
+                            'backgroundColor' => '#f49700',
+                            'borderWidth' => 0,
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function getJavaScriptModuleInstructions(): array
     {
         return [
+            JavaScriptModuleInstruction::create('@typo3/dashboard/contrib/chartjs.js'),
             JavaScriptModuleInstruction::create('@typo3/dashboard/chart-initializer.js'),
         ];
     }
@@ -62,32 +99,5 @@ final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterfa
     public function getOptions(): array
     {
         return [];
-    }
-
-    /**
-     * @param list<array{siteLabel: string, core: string, count: int, reachable: bool}> $documentCounts
-     * @return array<string, mixed>
-     */
-    private function getChartData(array $documentCounts): array
-    {
-        $labels = [];
-        $data = [];
-        $colors = [];
-
-        foreach ($documentCounts as $entry) {
-            $labels[] = $entry['siteLabel'] . ' (' . $entry['core'] . ')';
-            $data[] = $entry['count'];
-            $colors[] = $entry['reachable'] ? '#0d6efd' : '#6c757d';
-        }
-
-        return [
-            'labels' => $labels,
-            'datasets' => [
-                [
-                    'data' => $data,
-                    'backgroundColor' => $colors,
-                ],
-            ],
-        ];
     }
 }

@@ -1,9 +1,32 @@
 <html data-namespace-typo3-fluid="true"
       xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+<f:layout name="Widget/Widget" />
 
-<div class="widget-content-main">
-    <canvas class="widget-chart-canvas"
-            data-chart-type="bar"
-            data-chart='{chartData -> f:format.raw()}'></canvas>
-</div>
+<f:section name="main">
+    <f:if condition="{byType}">
+        <f:then>
+            <div class="widget-chart">
+                <canvas></canvas>
+            </div>
+        </f:then>
+        <f:else>
+            <f:if condition="{reachable}">
+                <f:then>
+                    <f:be.infobox title="Index empty" state="-1">
+                        No documents indexed in any reachable Solr core.
+                    </f:be.infobox>
+                </f:then>
+                <f:else>
+                    <f:be.infobox title="No data" state="-1">
+                        No Solr cores reachable.
+                    </f:be.infobox>
+                </f:else>
+            </f:if>
+        </f:else>
+    </f:if>
+</f:section>
+
+<f:section name="footer">
+    <f:render partial="Widget/Button" arguments="{button: button}"/>
+</f:section>
 </html>

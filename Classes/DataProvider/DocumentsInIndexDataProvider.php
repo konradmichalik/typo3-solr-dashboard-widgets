@@ -15,20 +15,26 @@ namespace KonradMichalik\SolrDashboardWidgets\DataProvider;
 
 use ApacheSolrForTypo3\Solr\ConnectionManager;
 use ApacheSolrForTypo3\Solr\Domain\Site\SiteRepository;
+use TYPO3\CMS\Core\Http\RequestFactory;
 
 final class DocumentsInIndexDataProvider
 {
     public function __construct(
         private readonly SiteRepository $siteRepository,
         private readonly ConnectionManager $connectionManager,
+        private readonly RequestFactory $requestFactory,
     ) {}
 
     /**
-     * @return list<array{siteLabel: string, core: string, count: int, reachable: bool}>
+     * Aggregate document counts per `type` facet across all reachable cores.
+     *
+     * @return array{reachable: bool, total: int, byType: list<array{type: string, count: int}>}
      */
-    public function getDocumentCounts(): array
+    public function getDocumentCountsByType(): array
     {
-        $counts = [];
+        $perType = [];
+        $total = 0;
+        $anyReachable = false;
 
         foreach ($this->siteRepository->getAvailableSites() as $site) {
             try {
@@ -38,25 +44,48 @@ final class DocumentsInIndexDataProvider
             }
 
             foreach ($connections as $connection) {
-                $count = 0;
-                $reachable = false;
+                $endpoint = $connection->getEndpoint('read');
+                $baseUri = $endpoint->getCoreBaseUri();
+                $url = $baseUri . 'select?q=*:*&rows=0&facet=true&facet.field=type&facet.mincount=1&wt=json';
 
                 try {
-                    $response = $connection->getReadService()->search('*:*', 0, 0);
-                    $count = (int)$response->getParsedData()->response->numFound;
-                    $reachable = true;
+                    $response = $this->requestFactory->request($url, 'GET', [
+                        'timeout' => 3,
+                        'connect_timeout' => 2,
+                    ]);
+                    if ($response->getStatusCode() !== 200) {
+                        continue;
+                    }
+                    $data = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
                 } catch (\Throwable) {
+                    continue;
                 }
 
-                $counts[] = [
-                    'siteLabel' => $site->getLabel(),
-                    'core' => $connection->getEndpoint('read')->getCore() ?? '',
-                    'count' => $count,
-                    'reachable' => $reachable,
-                ];
+                $anyReachable = true;
+                $total += (int)($data['response']['numFound'] ?? 0);
+
+                $facet = $data['facet_counts']['facet_fields']['type'] ?? [];
+                for ($i = 0, $n = count($facet); $i + 1 < $n; $i += 2) {
+                    $type = (string)$facet[$i];
+                    $count = (int)$facet[$i + 1];
+                    if ($type === '' || $count === 0) {
+                        continue;
+                    }
+                    $perType[$type] = ($perType[$type] ?? 0) + $count;
+                }
             }
         }
 
-        return $counts;
+        arsort($perType);
+        $byType = [];
+        foreach ($perType as $type => $count) {
+            $byType[] = ['type' => $type, 'count' => $count];
+        }
+
+        return [
+            'reachable' => $anyReachable,
+            'total' => $total,
+            'byType' => $byType,
+        ];
     }
 }
