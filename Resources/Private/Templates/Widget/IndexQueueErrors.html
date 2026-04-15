@@ -1,44 +1,46 @@
 <html data-namespace-typo3-fluid="true"
       xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+<f:layout name="Widget/Widget" />
 
-<div class="widget-content-main">
+<f:section name="main">
     <f:if condition="{errors}">
         <f:then>
             <div class="table-responsive">
-                <table class="table table-sm table-striped">
-                    <thead>
+                <table class="table table-sm table-hover align-middle mb-0">
+                    <thead class="table-light sticky-top">
                         <tr>
                             <th><f:translate key="widget.indexQueueErrors.recordType" extensionName="solr_dashboard_widgets" /></th>
-                            <th><f:translate key="widget.indexQueueErrors.uid" extensionName="solr_dashboard_widgets" /></th>
+                            <th class="text-end"><f:translate key="widget.indexQueueErrors.uid" extensionName="solr_dashboard_widgets" /></th>
                             <th><f:translate key="widget.indexQueueErrors.error" extensionName="solr_dashboard_widgets" /></th>
-                            <th><f:translate key="widget.indexQueueErrors.timestamp" extensionName="solr_dashboard_widgets" /></th>
+                            <th class="text-nowrap"><f:translate key="widget.indexQueueErrors.timestamp" extensionName="solr_dashboard_widgets" /></th>
                         </tr>
                     </thead>
                     <tbody>
                         <f:for each="{errors}" as="error">
                             <tr>
-                                <td>{error.item_type}</td>
-                                <td>{error.item_uid}</td>
-                                <td><span title="{error.errors}">{error.errors -> f:format.crop(maxCharacters: 80)}</span></td>
-                                <td><f:format.date format="d.m.Y H:i">{error.changed}</f:format.date></td>
+                                <td><span class="badge solr-widget-badge font-monospace">{error.item_type}</span></td>
+                                <td class="text-end font-monospace text-muted small">{error.item_uid}</td>
+                                <td class="small">
+                                    <span title="{error.errors}">{error.errors -> f:format.crop(maxCharacters: 70)}</span>
+                                </td>
+                                <td class="text-nowrap small text-muted">
+                                    <f:format.date format="d.m. H:i">{error.changed}</f:format.date>
+                                </td>
                             </tr>
                         </f:for>
                     </tbody>
                 </table>
             </div>
-            <div class="widget-content-footer">
-                <button type="button"
-                        class="btn btn-sm btn-warning"
-                        id="solr-reset-errors"
-                        data-reset-url="{resetUrl}"
-                        data-confirm-message="{f:translate(key: 'widget.indexQueueErrors.resetConfirm', extensionName: 'solr_dashboard_widgets')}">
-                    <f:translate key="widget.indexQueueErrors.resetButton" extensionName="solr_dashboard_widgets" />
-                </button>
-            </div>
         </f:then>
         <f:else>
-            <p class="text-muted"><f:translate key="widget.indexQueueErrors.noErrors" extensionName="solr_dashboard_widgets" /></p>
+            <f:be.infobox title="All clear" state="0">
+                <f:translate key="widget.indexQueueErrors.noErrors" extensionName="solr_dashboard_widgets" />
+            </f:be.infobox>
         </f:else>
     </f:if>
-</div>
+</f:section>
+
+<f:section name="footer">
+    <f:render partial="Widget/Button" arguments="{button: button}"/>
+</f:section>
 </html>

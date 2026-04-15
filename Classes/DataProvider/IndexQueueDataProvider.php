@@ -83,14 +83,4 @@ final class IndexQueueDataProvider
             ->fetchAllAssociative();
     }
 
-    public function resetErrors(): int
-    {
-        $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
-
-        return $queryBuilder
-            ->update(self::TABLE)
-            ->set('errors', '')
-            ->where($queryBuilder->expr()->neq('errors', $queryBuilder->createNamedParameter('')))
-            ->executeStatement();
-    }
 }
