@@ -4,9 +4,9 @@
 -- Root-level sys_template with EXT:solr static includes
 DELETE FROM sys_template WHERE pid = 1;
 INSERT INTO sys_template
-  (pid, tstamp, crdate, cruser_id, title, sitetitle, hidden, starttime, endtime, root, clear, include_static_file, constants, config, sorting, deleted)
+  (pid, tstamp, crdate, title, sitetitle, hidden, starttime, endtime, root, clear, include_static_file, constants, config, sorting, deleted)
 VALUES
-  (1, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 1, 'Solr Demo Root', 'Solr Dashboard Widgets',
+  (1, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 'Solr Demo Root', 'Solr Dashboard Widgets',
    0, 0, 0, 1, 3,
    'EXT:solr/Configuration/TypoScript/Solr/,EXT:solr/Configuration/TypoScript/Examples/System/',
    'plugin.tx_solr.solr {\r\n  scheme = http\r\n  host = solr\r\n  port = 8983\r\n  path = /solr/core_en/\r\n}',
