@@ -17,11 +17,6 @@ database:
 webimage_extra_packages: [libxml2-utils, php8.4-pcov]
 use_dns_when_possible: true
 composer_version: "2"
-web_extra_exposed_ports:
-  - name: solr
-    container_port: 8983
-    http_port: 8982
-    https_port: 8983
 nodejs_version: "16"
 corepack_enable: false
 hooks:

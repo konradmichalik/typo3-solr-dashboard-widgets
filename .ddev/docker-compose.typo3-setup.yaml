@@ -21,7 +21,7 @@ services:
             - TYPO3_INSTALL_SITE_SETUP_TYPE=site
             - TYPO3_INSTALL_WEB_SERVER_CONFIG=apache
 
-            # TYPO3 v13+ config
+            # TYPO3 v13 and v14 config
             - TYPO3_DB_DRIVER=mysqli
             - TYPO3_DB_USERNAME=root
             - TYPO3_DB_PASSWORD=root
