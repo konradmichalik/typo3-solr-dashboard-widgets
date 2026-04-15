@@ -1,0 +1,22 @@
+services:
+  solr:
+    image: apache/solr:9.7
+    container_name: ddev-${DDEV_SITENAME}-solr
+    ports:
+      - "8983"
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
+      com.ddev.approot: ${DDEV_APPROOT}
+    environment:
+      - SOLR_JAVA_MEM=-Xms512m -Xmx512m
+    volumes:
+      - solr_data:/var/solr/data
+    command: ["solr-precreate", "core_en"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8983/solr/admin/cores?action=STATUS || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  solr_data:

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+## Description: Initialize Solr cores with EXT:solr configsets
+## Usage: solr-init
+## Example: ddev solr-init
+
+echo "Copying EXT:solr configsets to Solr..."
+
+# Check if EXT:solr is installed
+if [ ! -d "vendor/apache-solr-for-typo3/solr" ]; then
+    echo "ERROR: EXT:solr is not installed. Run 'composer install' first."
+    exit 1
+fi
+
+# Find the configset path in EXT:solr
+CONFIGSET_PATH="vendor/apache-solr-for-typo3/solr/Resources/Private/Solr"
+if [ ! -d "$CONFIGSET_PATH" ]; then
+    echo "ERROR: Solr configsets not found at $CONFIGSET_PATH"
+    exit 1
+fi
+
+# Copy configset to Solr container
+echo "Uploading configset to Solr..."
+docker cp "$CONFIGSET_PATH/configsets/." "ddev-${DDEV_SITENAME}-solr:/opt/solr/server/solr/configsets/ext_solr/"
+
+# Recreate core with configset
+echo "Recreating core_en with ext_solr configset..."
+docker exec "ddev-${DDEV_SITENAME}-solr" solr delete -c core_en 2>/dev/null || true
+docker exec "ddev-${DDEV_SITENAME}-solr" solr create -c core_en -d /opt/solr/server/solr/configsets/ext_solr/
+
+echo "Solr core 'core_en' initialized successfully!"
+echo "Solr Admin UI: https://${DDEV_SITENAME}.ddev.site:8983/solr/"

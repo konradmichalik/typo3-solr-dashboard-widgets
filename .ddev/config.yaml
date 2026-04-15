@@ -30,6 +30,11 @@ web_environment:
   - TYPO3_INSTALL_SITE_SETUP_TYPE=no
   - TYPO3_INSTALL_SITE_BASE_URL=
   - TYPO3_INSTALL_WEB_SERVER_CONFIG=apache
+web_extra_exposed_ports:
+  - name: solr
+    container_port: 8983
+    http_port: 8982
+    https_port: 8983
 nodejs_version: "16"
 corepack_enable: false
 hooks:

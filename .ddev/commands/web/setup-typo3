@@ -1,0 +1,28 @@
+#!/bin/bash
+
+## Description: Set up TYPO3 with basic site configuration for Solr testing
+## Usage: setup-typo3
+## Example: ddev setup-typo3
+
+echo "Setting up TYPO3..."
+
+# Install TYPO3 via CLI
+vendor/bin/typo3 install:setup \
+    --driver=mysqli \
+    --host=db \
+    --port=3306 \
+    --dbname=db \
+    --username=db \
+    --password=db \
+    --admin-user-name=admin \
+    --admin-password='Password1!' \
+    --site-name='Solr Dashboard Widgets' \
+    --no-interaction \
+    --force
+
+echo "TYPO3 setup complete!"
+echo ""
+echo "Next steps:"
+echo "  1. ddev solr-init     - Initialize Solr cores"
+echo "  2. Configure Solr connection in TYPO3 site configuration"
+echo "  3. Index content: ddev exec vendor/bin/typo3 solr:index"
