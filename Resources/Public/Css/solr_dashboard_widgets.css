@@ -1,0 +1,35 @@
+/*
+ * Solr Dashboard Widgets — shared widget styles.
+ *
+ * Badges in TYPO3 dark mode: Bootstrap's bg-*-subtle classes follow
+ * `data-bs-theme`, but the TYPO3 backend toggles `data-color-scheme` instead,
+ * so Bootstrap never flips. These classes drive bg + border from a CSS
+ * custom property (`--badge-accent`) via color-mix, while keeping the
+ * foreground text tied to the theme's body color — so they adapt to both
+ * light and dark modes automatically.
+ */
+.solr-widget-badge {
+    --badge-accent: currentColor;
+    background-color: color-mix(in srgb, var(--badge-accent) 12%, transparent);
+    color: inherit;
+    border: 1px solid color-mix(in srgb, var(--badge-accent) 30%, transparent);
+}
+
+.solr-widget-badge--info {
+    --badge-accent: #4ba2b3;
+}
+
+.solr-widget-badge--danger {
+    --badge-accent: #c83c3c;
+}
+
+/*
+ * Metric labels with native `title` tooltips (Solr Health). A dotted underline
+ * and help cursor signal hoverable explanations without a JS tooltip layer.
+ */
+.solr-widget-hint {
+    text-decoration: underline dotted;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    cursor: help;
+}
