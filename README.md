@@ -2,24 +2,26 @@
 
 ![Extension icon](Resources/Public/Icons/Extension.svg)
 
-# TYPO3 extension `solr_dashboard_widgets`
+# TYPO3 extension `typo3_solr_dashboard_widgets`
 
-[![Latest Stable Version](https://typo3-badges.dev/badge/solr_dashboard_widgets/version/shields.svg)](https://extensions.typo3.org/extension/solr_dashboard_widgets)
-[![Supported TYPO3 versions](https://typo3-badges.dev/badge/solr_dashboard_widgets/typo3/shields.svg)](https://extensions.typo3.org/extension/solr_dashboard_widgets)
-[![License](https://poser.pugx.org/konradmichalik/solr-dashboard-widgets/license)](LICENSE.md)
+[![Latest Stable Version](https://typo3-badges.dev/badge/typo3_solr_dashboard_widgets/version/shields.svg)](https://extensions.typo3.org/extension/typo3_solr_dashboard_widgets)
+[![Supported TYPO3 versions](https://typo3-badges.dev/badge/typo3_solr_dashboard_widgets/typo3/shields.svg)](https://extensions.typo3.org/extension/typo3_solr_dashboard_widgets)
+[![License](https://poser.pugx.org/konradmichalik/typo3-solr-dashboard-widgets/license)](LICENSE.md)
 
 </div>
 
 This extension adds a ready-to-use **Solr Overview** dashboard to the TYPO3 backend with a set of widgets that surface the most relevant information about your [EXT:solr](https://extensions.typo3.org/extension/solr) installation at a glance:
 
+![screenshot.jpg](Documentation/Images/screenshot.jpg)
+
 - **Connection & Health** — live ping status per site/core and JVM/query metrics
 - **Indexing** — queue status, errors, last and next scheduler run
 - **Search** — volume trend, top queries, queries without results
 - **Index content** — document counts per type across all cores
-- **Caching** — Solr cache hit rates (optional, not in default preset)
+- **Caching** — Solr cache hit rates
 
 > [!NOTE]
-> Most EXT:solr backend modules answer *"what's wrong right now?"* only after you open them. This extension moves the answer onto the TYPO3 dashboard — one glance, one page, all cores and all sites.
+> Huge thanks to the [**Apache Solr for TYPO3**](https://github.com/TYPO3-Solr/ext-solr) team — this extension stands entirely on their shoulders. Everything you see here is just a different lens on the data [EXT:solr](https://extensions.typo3.org/extension/solr) already provides.
 
 ## 🔥 Installation
 
@@ -32,24 +34,24 @@ This extension adds a ready-to-use **Solr Overview** dashboard to the TYPO3 back
 
 ### Composer
 
-[![Packagist](https://img.shields.io/packagist/v/konradmichalik/solr-dashboard-widgets?label=version&logo=packagist)](https://packagist.org/packages/konradmichalik/solr-dashboard-widgets)
-[![Packagist Downloads](https://img.shields.io/packagist/dt/konradmichalik/solr-dashboard-widgets?color=brightgreen)](https://packagist.org/packages/konradmichalik/solr-dashboard-widgets)
+[![Packagist](https://img.shields.io/packagist/v/konradmichalik/typo3-solr-dashboard-widgets?label=version&logo=packagist)](https://packagist.org/packages/konradmichalik/typo3-solr-dashboard-widgets)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/konradmichalik/typo3-solr-dashboard-widgets?color=brightgreen)](https://packagist.org/packages/konradmichalik/typo3-solr-dashboard-widgets)
 
 ```bash
-composer require konradmichalik/solr-dashboard-widgets
+composer require konradmichalik/typo3-solr-dashboard-widgets
 ```
 
 ### TER
 
-[![TER version](https://typo3-badges.dev/badge/solr_dashboard_widgets/version/shields.svg)](https://extensions.typo3.org/extension/solr_dashboard_widgets)
-[![TER downloads](https://typo3-badges.dev/badge/solr_dashboard_widgets/downloads/shields.svg)](https://extensions.typo3.org/extension/solr_dashboard_widgets)
+[![TER version](https://typo3-badges.dev/badge/typo3_solr_dashboard_widgets/version/shields.svg)](https://extensions.typo3.org/extension/typo3_solr_dashboard_widgets)
+[![TER downloads](https://typo3-badges.dev/badge/typo3_solr_dashboard_widgets/downloads/shields.svg)](https://extensions.typo3.org/extension/typo3_solr_dashboard_widgets)
 
-Download the zip file from [TYPO3 extension repository (TER)](https://extensions.typo3.org/extension/solr_dashboard_widgets).
+Download the zip file from [TYPO3 extension repository (TER)](https://extensions.typo3.org/extension/typo3_solr_dashboard_widgets).
 
 ### Setup
 
 ```bash
-vendor/bin/typo3 extension:setup --extension=solr_dashboard_widgets
+vendor/bin/typo3 extension:setup --extension=typo3_solr_dashboard_widgets
 ```
 
 Open **Dashboard** in the TYPO3 backend, click **+** in a tab strip and pick **Solr Overview** from the presets.
