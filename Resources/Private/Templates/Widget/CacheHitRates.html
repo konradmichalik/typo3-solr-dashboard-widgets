@@ -9,7 +9,7 @@
                 <f:for each="{rates.caches}" as="cache">
                     <li class="mb-3">
                         <div class="d-flex justify-content-between align-items-baseline mb-1">
-                            <span class="small fw-bold">{cache.label}</span>
+                            <span class="small fw-bold solr-widget-hint" title="{cache.tooltip}">{cache.label}</span>
                             <span class="badge solr-widget-badge solr-widget-badge--info rounded-pill">
                                 <f:format.number decimals="1">{cache.hitRatio}</f:format.number> %
                             </span>

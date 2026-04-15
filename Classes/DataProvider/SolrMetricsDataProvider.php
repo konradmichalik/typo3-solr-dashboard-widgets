@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the "solr_dashboard_widgets" TYPO3 CMS extension.
+ * This file is part of the "typo3_solr_dashboard_widgets" TYPO3 CMS extension.
  *
  * (c) 2026 Konrad Michalik <hej@konradmichalik.dev>
  *
@@ -136,14 +136,26 @@ final class SolrMetricsDataProvider
     /**
      * Aggregated cache hit rates across all reachable cores.
      *
-     * @return array{reachable: bool, caches: list<array{label: string, metric: string, hitRatio: float, lookups: int, hits: int}>}
+     * @return array{reachable: bool, caches: list<array{label: string, metric: string, tooltip: string, hitRatio: float, lookups: int, hits: int}>}
      */
     public function getCacheHitRates(): array
     {
         $caches = [
-            ['label' => 'Filter Cache', 'metric' => 'CACHE.searcher.filterCache'],
-            ['label' => 'Query Result Cache', 'metric' => 'CACHE.searcher.queryResultCache'],
-            ['label' => 'Document Cache', 'metric' => 'CACHE.searcher.documentCache'],
+            [
+                'label' => 'Filter Cache',
+                'metric' => 'CACHE.searcher.filterCache',
+                'tooltip' => 'Caches results of filter queries (fq=...). A high hit ratio means repeated filters (e.g. facets, access restrictions) are served from memory instead of re-running the query against the index.',
+            ],
+            [
+                'label' => 'Query Result Cache',
+                'metric' => 'CACHE.searcher.queryResultCache',
+                'tooltip' => 'Caches the ordered list of document IDs returned by a search query. A high hit ratio means identical queries (same q, sort and filters) are answered directly from cache.',
+            ],
+            [
+                'label' => 'Document Cache',
+                'metric' => 'CACHE.searcher.documentCache',
+                'tooltip' => 'Caches the stored fields of individual documents. A high hit ratio helps when the same documents are accessed repeatedly — e.g. pagination or recurring result sets.',
+            ],
         ];
 
         $anyReachable = false;
@@ -171,6 +183,7 @@ final class SolrMetricsDataProvider
             $result[] = [
                 'label' => $cache['label'],
                 'metric' => $cache['metric'],
+                'tooltip' => $cache['tooltip'],
                 'hitRatio' => $totalLookups > 0 ? ($totalHits / $totalLookups) * 100.0 : 0.0,
                 'lookups' => $totalLookups,
                 'hits' => $totalHits,
