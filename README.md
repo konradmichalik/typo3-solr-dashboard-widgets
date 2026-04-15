@@ -138,12 +138,16 @@ The extension ships a **Solr Overview** preset (`solrOverview`) that arranges th
 
 New dashboards → **+** → **Solr Overview**.
 
-## 🌓 Dark mode
+## 🙌 Credits
 
-All widgets use theme-adaptive styling: badges are driven by `currentColor` and `color-mix()`, charts use a mid-saturation palette that remains legible in both light and dark TYPO3 backends.
+- [**Apache Solr for TYPO3**](https://github.com/TYPO3-Solr/ext-solr) — every bit of data surfaced by this dashboard (index queue, statistics table, Solr connection objects, scheduler task) originates from the [EXT:solr](https://extensions.typo3.org/extension/solr) team's work.
+- [**Apache Solr**](https://solr.apache.org/) — the search platform itself and its admin `/metrics` + `/admin/info/system` endpoints, which power the Solr Health and Cache Hit Rates widgets.
+- [**TYPO3 Dashboard**](https://docs.typo3.org/c/typo3/cms-dashboard/main/en-us/) — widget interfaces (`WidgetInterface`, `ButtonProviderInterface`, `EventDataInterface`, `AdditionalCssInterface`), layout and partials this extension plugs into.
+- [Chart.js](https://www.chartjs.org/) — doughnut, bar and line charts, shipped by TYPO3 Dashboard.
 
-> [!TIP]
-> No `prefers-color-scheme` media-query overrides are needed — the widgets adapt automatically to the active TYPO3 color scheme.
+## 🧑‍💻 Contributing
+
+Please have a look at [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## ⭐ License
 
