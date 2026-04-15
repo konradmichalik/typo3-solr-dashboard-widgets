@@ -45,8 +45,8 @@ INSERT INTO tx_solr_indexqueue_item (root, item_type, item_uid, indexing_configu
 
 -- Scheduler task entry pretending to be the Solr indexer (for Last Indexing Run widget)
 DELETE FROM tx_scheduler_task WHERE serialized_task_object LIKE '%Solr%';
-INSERT INTO tx_scheduler_task (tstamp, nextexecution, lastexecution_time, lastexecution_failure, lastexecution_context, serialized_task_object, disable, description, task_group)
-VALUES (UNIX_TIMESTAMP(), UNIX_TIMESTAMP() + 3600, UNIX_TIMESTAMP() - 600, '', 'CLI',
+INSERT INTO tx_scheduler_task (nextexecution, lastexecution_time, lastexecution_failure, lastexecution_context, serialized_task_object, disable, description, task_group)
+VALUES (UNIX_TIMESTAMP() + 3600, UNIX_TIMESTAMP() - 600, '', 'CLI',
         'O:39:"ApacheSolrForTypo3\\\\Solr\\\\Task\\\\IndexQueueWorkerTask":0:{}', 0, 'Solr Index Queue Worker (demo)', 0);
 
 -- Search statistics over the last 30 days
