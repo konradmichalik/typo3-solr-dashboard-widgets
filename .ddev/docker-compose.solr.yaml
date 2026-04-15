@@ -2,7 +2,9 @@ services:
   solr:
     image: solr:9.7
     container_name: ddev-${DDEV_SITENAME}-solr
-    ports:
+    hostname: solr
+    user: "0:0"
+    expose:
       - "8983"
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
@@ -10,13 +12,17 @@ services:
     environment:
       - SOLR_JAVA_MEM=-Xms512m -Xmx512m
     volumes:
-      - solr_data:/var/solr/data
-    command: ["solr-precreate", "core_en"]
+      - solr_data:/var/solr
+    command:
+      - bash
+      - -c
+      - "chown -R 8983:8983 /var/solr && exec runuser -u solr -- /opt/solr/docker/scripts/docker-entrypoint.sh solr-precreate core_en"
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8983/solr/admin/cores?action=STATUS || exit 1"]
-      interval: 10s
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8983/solr/admin/cores?action=STATUS || exit 1"]
+      interval: 15s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
 
 volumes:
   solr_data:
