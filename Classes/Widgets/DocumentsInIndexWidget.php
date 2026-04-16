@@ -15,6 +15,7 @@ namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 
 use KonradMichalik\SolrDashboardWidgets\DataProvider\DocumentsInIndexDataProvider;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Localization\{LanguageService, LanguageServiceFactory};
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
 use TYPO3\CMS\Dashboard\Widgets\{ButtonProviderInterface, EventDataInterface, JavaScriptInterface, RequestAwareWidgetInterface, WidgetConfigurationInterface, WidgetInterface};
@@ -33,6 +34,7 @@ final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterfa
     public function __construct(
         private readonly WidgetConfigurationInterface $configuration,
         private readonly DocumentsInIndexDataProvider $dataProvider,
+        private readonly LanguageServiceFactory $languageServiceFactory,
         private readonly ViewFactoryInterface $viewFactory,
         private readonly ?ButtonProviderInterface $buttonProvider = null,
     ) {}
@@ -60,6 +62,7 @@ final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterfa
     public function getEventData(): array
     {
         $result = $this->dataProvider->getDocumentCountsByType();
+        $languageService = $this->languageServiceFactory->createFromUserPreferences($GLOBALS['BE_USER'] ?? null);
 
         return [
             'graphConfig' => [
@@ -77,7 +80,7 @@ final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterfa
                     ],
                 ],
                 'data' => [
-                    'labels' => array_map(static fn (array $row): string => $row['type'], $result['byType']),
+                    'labels' => array_map(static fn (array $row): string => self::resolveTableLabel($row['type'], $languageService), $result['byType']),
                     'datasets' => [
                         [
                             'label' => 'Documents',
@@ -105,5 +108,19 @@ final class DocumentsInIndexWidget implements WidgetInterface, JavaScriptInterfa
     public function getOptions(): array
     {
         return [];
+    }
+
+    /**
+     * Resolve a Solr `type` value (typically a TYPO3 table name) to its
+     * localized TCA label. Falls back to the raw type if no TCA is registered.
+     */
+    private static function resolveTableLabel(string $type, LanguageService $languageService): string
+    {
+        $lllKey = $GLOBALS['TCA'][$type]['ctrl']['title'] ?? null;
+        if (null === $lllKey || '' === $lllKey) {
+            return $type;
+        }
+
+        return $languageService->sL($lllKey) ?: $type;
     }
 }
