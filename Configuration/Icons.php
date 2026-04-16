@@ -55,4 +55,12 @@ return [
         'provider' => SvgIconProvider::class,
         'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/widget-cache-hit-rates.svg',
     ],
+    'typo3-solr-dashboard-widgets-preset-search-insights' => [
+        'provider' => SvgIconProvider::class,
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/preset-search-insights.svg',
+    ],
+    'typo3-solr-dashboard-widgets-preset-overview' => [
+        'provider' => SvgIconProvider::class,
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/preset-overview.svg',
+    ],
 ];

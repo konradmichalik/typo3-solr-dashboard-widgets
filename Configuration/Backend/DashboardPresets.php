@@ -15,7 +15,7 @@ return [
     'solrSearchInsights' => [
         'title' => 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:preset.solrSearchInsights.title',
         'description' => 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:preset.solrSearchInsights.description',
-        'iconIdentifier' => 'typo3-solr-dashboard-widgets',
+        'iconIdentifier' => 'typo3-solr-dashboard-widgets-preset-search-insights',
         'defaultWidgets' => [
             'solrDashboardWidgets.searchTerms',
             'solrDashboardWidgets.searchVolume',
@@ -28,7 +28,7 @@ return [
     'solrOverview' => [
         'title' => 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:preset.solrOverview.title',
         'description' => 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:preset.solrOverview.description',
-        'iconIdentifier' => 'typo3-solr-dashboard-widgets',
+        'iconIdentifier' => 'typo3-solr-dashboard-widgets-preset-overview',
         'defaultWidgets' => [
             'solrDashboardWidgets.connectionStatus',
             'solrDashboardWidgets.solrHealth',
