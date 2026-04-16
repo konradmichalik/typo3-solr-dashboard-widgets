@@ -139,11 +139,17 @@
 				<source>Enable plugin.tx_solr.statistics = 1 in your TypoScript configuration.</source>
 			</trans-unit>
 
+			<trans-unit id="preset.solrSearchInsights.title" resname="preset.solrSearchInsights.title">
+				<source>Solr Search Insights</source>
+			</trans-unit>
+			<trans-unit id="preset.solrSearchInsights.description" resname="preset.solrSearchInsights.description">
+				<source>Search-focused dashboard with top terms, volume trends, and indexing status.</source>
+			</trans-unit>
 			<trans-unit id="preset.solrOverview.title" resname="preset.solrOverview.title">
 				<source>Solr Overview</source>
 			</trans-unit>
 			<trans-unit id="preset.solrOverview.description" resname="preset.solrOverview.description">
-				<source>A predefined dashboard with all Solr widgets.</source>
+				<source>Complete dashboard with all Solr widgets including server health and cache metrics.</source>
 			</trans-unit>
 		</body>
 	</file>

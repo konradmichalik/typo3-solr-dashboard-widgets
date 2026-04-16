@@ -12,6 +12,19 @@ declare(strict_types=1);
  */
 
 return [
+    'solrSearchInsights' => [
+        'title' => 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:preset.solrSearchInsights.title',
+        'description' => 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:preset.solrSearchInsights.description',
+        'iconIdentifier' => 'typo3-solr-dashboard-widgets',
+        'defaultWidgets' => [
+            'solrDashboardWidgets.searchTerms',
+            'solrDashboardWidgets.searchVolume',
+            'solrDashboardWidgets.documentsInIndex',
+            'solrDashboardWidgets.indexQueueStatus',
+            'solrDashboardWidgets.lastIndexingRun',
+        ],
+        'showInWizard' => true,
+    ],
     'solrOverview' => [
         'title' => 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:preset.solrOverview.title',
         'description' => 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:preset.solrOverview.description',
@@ -19,12 +32,13 @@ return [
         'defaultWidgets' => [
             'solrDashboardWidgets.connectionStatus',
             'solrDashboardWidgets.solrHealth',
+            'solrDashboardWidgets.cacheHitRates',
             'solrDashboardWidgets.lastIndexingRun',
-            'solrDashboardWidgets.searchTerms',
             'solrDashboardWidgets.indexQueueStatus',
-            'solrDashboardWidgets.searchVolume',
-            'solrDashboardWidgets.documentsInIndex',
             'solrDashboardWidgets.indexQueueErrors',
+            'solrDashboardWidgets.documentsInIndex',
+            'solrDashboardWidgets.searchTerms',
+            'solrDashboardWidgets.searchVolume',
         ],
         'showInWizard' => true,
     ],
