@@ -153,15 +153,15 @@ final readonly class LastIndexingRunDataProvider
     /**
      * Match Solr-related scheduler tasks regardless of TYPO3 version.
      *
-     * v13 stores the full object in `serialized_task_object`; v14+ added a
-     * dedicated `task_class` column. We check for the column at runtime so
-     * the same code runs on both versions.
+     * v14 stores the FQCN in `tasktype` and leaves `serialized_task_object`
+     * NULL; v13 only has the serialized blob. We check for `tasktype` first
+     * and fall back to a LIKE on the serialized column.
      */
     private function buildSolrTaskCondition(QueryBuilder $queryBuilder): string
     {
-        if ($this->isTableColumnAvailable('task_class')) {
+        if ($this->isTableColumnAvailable('tasktype')) {
             return $queryBuilder->expr()->like(
-                'task_class',
+                'tasktype',
                 $queryBuilder->createNamedParameter('%Solr%'),
             );
         }
