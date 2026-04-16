@@ -267,15 +267,6 @@ final class SolrMetricsDataProvider
     }
 
     /**
-     * Find the metrics group for a given core name.
-     *
-     * Standalone Solr uses `solr.core.{core}`, SolrCloud appends
-     * `.shard{N}.replica_n{N}`. We match by prefix and return the
-     * first matching group.
-     *
-     * @return array<string, mixed>|null
-     */
-    /**
      * Fetch a specific metric from a core's metrics group.
      *
      * @param array{solrBaseUri: string, siteLabel: string, core: string, auth: array{username: ?string, password: ?string}} $core
@@ -296,6 +287,12 @@ final class SolrMetricsDataProvider
     }
 
     /**
+     * Find the metrics group for a given core name.
+     *
+     * Standalone Solr uses `solr.core.{core}`, SolrCloud appends
+     * `.shard{N}.replica_n{N}`. We match by prefix and return the
+     * first matching group.
+     *
      * @param array<string, mixed> $allMetrics
      *
      * @return array<string, mixed>|null

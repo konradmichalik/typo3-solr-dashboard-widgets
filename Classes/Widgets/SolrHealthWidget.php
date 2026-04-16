@@ -28,6 +28,9 @@ final class SolrHealthWidget implements WidgetInterface, JavaScriptInterface, Re
 {
     use DashboardWidgetViewTrait;
 
+    private const HEAP_CRITICAL_PERCENT = 85;
+    private const HEAP_WARNING_PERCENT = 70;
+
     private ServerRequestInterface $request;
 
     public function __construct(
@@ -76,7 +79,7 @@ final class SolrHealthWidget implements WidgetInterface, JavaScriptInterface, Re
         }
 
         $usedPercent = $memory['usedPercent'];
-        $usedColor = $usedPercent >= 85 ? '#c83c3c' : ($usedPercent >= 70 ? '#e8a33d' : '#4ba2b3');
+        $usedColor = $usedPercent >= self::HEAP_CRITICAL_PERCENT ? '#c83c3c' : ($usedPercent >= self::HEAP_WARNING_PERCENT ? '#e8a33d' : '#4ba2b3');
 
         return [
             'graphConfig' => [
