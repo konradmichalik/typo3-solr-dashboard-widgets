@@ -20,7 +20,8 @@ use TYPO3\CMS\Core\Http\RequestFactory;
 
 use function array_key_exists;
 use function is_array;
-use function sprintf;
+use function rtrim;
+use function strlen;
 
 /**
  * SolrMetricsDataProvider.
@@ -29,13 +30,13 @@ use function sprintf;
  */
 final class SolrMetricsDataProvider
 {
-    /** @var array<string, array<string, mixed>|null> keyed by "scheme://host:port" */
+    /** @var array<string, array<string, mixed>|null> keyed by Solr base URI */
     private array $metricsCache = [];
 
-    /** @var array<string, ?string> keyed by "scheme://host:port" */
+    /** @var array<string, ?string> keyed by Solr base URI */
     private array $versionCache = [];
 
-    /** @var list<array{hostUri: string, siteLabel: string, core: string}>|null */
+    /** @var list<array{solrBaseUri: string, siteLabel: string, core: string}>|null */
     private ?array $coresCache = null;
 
     public function __construct(
@@ -49,8 +50,8 @@ final class SolrMetricsDataProvider
      */
     public function getJvmMemory(): ?array
     {
-        foreach ($this->getUniqueHosts() as $hostUri) {
-            $metrics = $this->fetchMetrics($hostUri);
+        foreach ($this->getUniqueHosts() as $solrBaseUri) {
+            $metrics = $this->fetchMetrics($solrBaseUri);
             if (null === $metrics) {
                 continue;
             }
@@ -88,7 +89,7 @@ final class SolrMetricsDataProvider
         $anyReachable = false;
 
         foreach ($this->getCores() as $core) {
-            $metrics = $this->fetchMetrics($core['hostUri']);
+            $metrics = $this->fetchMetrics($core['solrBaseUri']);
             if (null === $metrics) {
                 continue;
             }
@@ -193,22 +194,22 @@ final class SolrMetricsDataProvider
      */
     public function getSolrVersion(): ?string
     {
-        foreach ($this->getUniqueHosts() as $hostUri) {
-            if (!array_key_exists($hostUri, $this->versionCache)) {
-                $this->versionCache[$hostUri] = $this->fetchSolrVersion($hostUri);
+        foreach ($this->getUniqueHosts() as $solrBaseUri) {
+            if (!array_key_exists($solrBaseUri, $this->versionCache)) {
+                $this->versionCache[$solrBaseUri] = $this->fetchSolrVersion($solrBaseUri);
             }
-            if (null !== $this->versionCache[$hostUri]) {
-                return $this->versionCache[$hostUri];
+            if (null !== $this->versionCache[$solrBaseUri]) {
+                return $this->versionCache[$solrBaseUri];
             }
         }
 
         return null;
     }
 
-    private function fetchSolrVersion(string $hostUri): ?string
+    private function fetchSolrVersion(string $solrBaseUri): ?string
     {
         try {
-            $response = $this->requestFactory->request($hostUri.'/solr/admin/info/system?wt=json', 'GET', [
+            $response = $this->requestFactory->request($solrBaseUri.'admin/info/system?wt=json', 'GET', [
                 'timeout' => 3,
                 'connect_timeout' => 2,
             ]);
@@ -237,7 +238,7 @@ final class SolrMetricsDataProvider
         $anyReachable = false;
 
         foreach ($this->getCores() as $core) {
-            $metrics = $this->fetchMetrics($core['hostUri']);
+            $metrics = $this->fetchMetrics($core['solrBaseUri']);
             if (null === $metrics) {
                 continue;
             }
@@ -255,7 +256,7 @@ final class SolrMetricsDataProvider
     }
 
     /**
-     * @return list<array{hostUri: string, siteLabel: string, core: string}>
+     * @return list<array{solrBaseUri: string, siteLabel: string, core: string}>
      */
     private function getCores(): array
     {
@@ -272,20 +273,31 @@ final class SolrMetricsDataProvider
             }
             foreach ($connections as $connection) {
                 $endpoint = $connection->getEndpoint('read');
+                $core = $endpoint->getCore() ?? '';
                 $cores[] = [
-                    'hostUri' => sprintf(
-                        '%s://%s:%d',
-                        $endpoint->getScheme(),
-                        $endpoint->getHost(),
-                        $endpoint->getPort(),
-                    ),
+                    'solrBaseUri' => $this->deriveSolrBase($endpoint->getCoreBaseUri(), $core),
                     'siteLabel' => $site->getLabel(),
-                    'core' => $endpoint->getCore() ?? '',
+                    'core' => $core,
                 ];
             }
         }
 
         return $this->coresCache = $cores;
+    }
+
+    /**
+     * Derive the Solr base URI (e.g. `http://host:8983/solr/`) from the
+     * core base URI returned by Solarium. This is more reliable than
+     * `getServerUri()` because Solarium may internally prepend the
+     * context path (`/solr/`) only when building the core URI.
+     */
+    private function deriveSolrBase(string $coreBaseUri, string $core): string
+    {
+        if ('' !== $core) {
+            return substr($coreBaseUri, 0, -strlen($core) - 1);
+        }
+
+        return rtrim($coreBaseUri, '/').'/';
     }
 
     /**
@@ -295,7 +307,7 @@ final class SolrMetricsDataProvider
     {
         $hosts = [];
         foreach ($this->getCores() as $core) {
-            $hosts[$core['hostUri']] = true;
+            $hosts[$core['solrBaseUri']] = true;
         }
 
         return array_keys($hosts);
@@ -304,13 +316,13 @@ final class SolrMetricsDataProvider
     /**
      * @return array<mixed>|null
      */
-    private function fetchMetrics(string $hostUri): ?array
+    private function fetchMetrics(string $solrBaseUri): ?array
     {
-        if (array_key_exists($hostUri, $this->metricsCache)) {
-            return $this->metricsCache[$hostUri];
+        if (array_key_exists($solrBaseUri, $this->metricsCache)) {
+            return $this->metricsCache[$solrBaseUri];
         }
 
-        $url = $hostUri.'/solr/admin/metrics?wt=json&group=jvm,core&prefix=memory.heap,QUERY./select.requestTimes,CACHE.searcher';
+        $url = $solrBaseUri.'admin/metrics?wt=json&group=jvm,core&prefix=memory.heap,QUERY./select.requestTimes,CACHE.searcher';
 
         try {
             $response = $this->requestFactory->request($url, 'GET', [
@@ -318,13 +330,13 @@ final class SolrMetricsDataProvider
                 'connect_timeout' => 2,
             ]);
             if (200 !== $response->getStatusCode()) {
-                return $this->metricsCache[$hostUri] = null;
+                return $this->metricsCache[$solrBaseUri] = null;
             }
             $data = json_decode((string) $response->getBody(), true, 512, \JSON_THROW_ON_ERROR);
         } catch (Throwable) {
-            return $this->metricsCache[$hostUri] = null;
+            return $this->metricsCache[$solrBaseUri] = null;
         }
 
-        return $this->metricsCache[$hostUri] = is_array($data) ? $data : null;
+        return $this->metricsCache[$solrBaseUri] = is_array($data) ? $data : null;
     }
 }

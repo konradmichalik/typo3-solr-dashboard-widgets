@@ -18,7 +18,7 @@ use ApacheSolrForTypo3\Solr\Domain\Site\SiteRepository;
 use Throwable;
 use TYPO3\CMS\Dashboard\Widgets\ButtonProviderInterface;
 
-use function sprintf;
+use function strlen;
 
 /**
  * SolrAdminUiButtonProvider.
@@ -48,13 +48,13 @@ final readonly class SolrAdminUiButtonProvider implements ButtonProviderInterfac
             }
             foreach ($connections as $connection) {
                 $endpoint = $connection->getEndpoint('read');
+                $core = $endpoint->getCore() ?? '';
 
-                return sprintf(
-                    '%s://%s:%d/solr/',
-                    $endpoint->getScheme(),
-                    $endpoint->getHost(),
-                    $endpoint->getPort(),
-                );
+                if ('' !== $core) {
+                    return substr($endpoint->getCoreBaseUri(), 0, -strlen($core) - 1);
+                }
+
+                return $endpoint->getServerUri();
             }
         }
 
