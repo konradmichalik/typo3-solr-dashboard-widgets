@@ -89,34 +89,21 @@ final class SolrMetricsDataProvider
         $anyReachable = false;
 
         foreach ($this->getCores() as $core) {
-            $metrics = $this->fetchMetrics($core['solrBaseUri'], $core['auth']);
-            if (null === $metrics) {
-                continue;
-            }
-            $coreMetrics = $metrics['metrics']['solr.core.'.$core['core']] ?? null;
-            if (!is_array($coreMetrics)) {
-                continue;
-            }
-            $requestTimes = $coreMetrics['QUERY./select.requestTimes'] ?? null;
-            if (!is_array($requestTimes)) {
+            $requestTimes = $this->fetchCoreMetric($core, 'QUERY./select.requestTimes');
+            if (null === $requestTimes) {
                 continue;
             }
             $anyReachable = true;
 
             $count = (int) ($requestTimes['count'] ?? 0);
-            $rate1m = (float) ($requestTimes['1minRate'] ?? 0.0);
             $meanMs = (float) ($requestTimes['mean_ms'] ?? 0.0);
             $p95Ms = (float) ($requestTimes['p95_ms'] ?? 0.0);
 
             $totalCount += $count;
-            $perMinute += $rate1m * 60.0;
-            if ($count > 0) {
-                $weightedMeanNumerator += $meanMs * $count;
-                $weightedMeanDenominator += $count;
-            }
-            if ($p95Ms > $maxP95) {
-                $maxP95 = $p95Ms;
-            }
+            $perMinute += (float) ($requestTimes['1minRate'] ?? 0.0) * 60.0;
+            $weightedMeanNumerator += $meanMs * $count;
+            $weightedMeanDenominator += $count;
+            $maxP95 = max($maxP95, $p95Ms);
 
             $perCore[] = [
                 'siteLabel' => $core['siteLabel'],
@@ -167,9 +154,7 @@ final class SolrMetricsDataProvider
 
         foreach ($caches as $cache) {
             [$totalLookups, $totalHits, $reachable] = $this->aggregateCacheMetric($cache['metric']);
-            if ($reachable) {
-                $anyReachable = true;
-            }
+            $anyReachable = $anyReachable || $reachable;
             $result[] = [
                 'label' => $cache['label'],
                 'metric' => $cache['metric'],
@@ -238,18 +223,13 @@ final class SolrMetricsDataProvider
         $anyReachable = false;
 
         foreach ($this->getCores() as $core) {
-            $metrics = $this->fetchMetrics($core['solrBaseUri'], $core['auth']);
-            if (null === $metrics) {
-                continue;
-            }
-            $coreMetrics = $metrics['metrics']['solr.core.'.$core['core']][$metricKey] ?? null;
-            if (!is_array($coreMetrics)) {
+            $cacheMetrics = $this->fetchCoreMetric($core, $metricKey);
+            if (null === $cacheMetrics) {
                 continue;
             }
             $anyReachable = true;
-            // Prefer cumulative metrics (more stable over time) when present.
-            $totalLookups += (int) ($coreMetrics['cumulative_lookups'] ?? $coreMetrics['lookups'] ?? 0);
-            $totalHits += (int) ($coreMetrics['cumulative_hits'] ?? $coreMetrics['hits'] ?? 0);
+            $totalLookups += (int) ($cacheMetrics['cumulative_lookups'] ?? $cacheMetrics['lookups'] ?? 0);
+            $totalHits += (int) ($cacheMetrics['cumulative_hits'] ?? $cacheMetrics['hits'] ?? 0);
         }
 
         return [$totalLookups, $totalHits, $anyReachable];
@@ -284,6 +264,53 @@ final class SolrMetricsDataProvider
         }
 
         return $this->coresCache = $cores;
+    }
+
+    /**
+     * Find the metrics group for a given core name.
+     *
+     * Standalone Solr uses `solr.core.{core}`, SolrCloud appends
+     * `.shard{N}.replica_n{N}`. We match by prefix and return the
+     * first matching group.
+     *
+     * @return array<string, mixed>|null
+     */
+    /**
+     * Fetch a specific metric from a core's metrics group.
+     *
+     * @param array{solrBaseUri: string, siteLabel: string, core: string, auth: array{username: ?string, password: ?string}} $core
+     *
+     * @return array<string, mixed>|null
+     */
+    private function fetchCoreMetric(array $core, string $metricKey): ?array
+    {
+        $metrics = $this->fetchMetrics($core['solrBaseUri'], $core['auth']);
+        if (null === $metrics) {
+            return null;
+        }
+
+        $coreGroup = $this->findCoreMetrics($metrics['metrics'] ?? [], $core['core']);
+        $metric = $coreGroup[$metricKey] ?? null;
+
+        return is_array($metric) ? $metric : null;
+    }
+
+    /**
+     * @param array<string, mixed> $allMetrics
+     *
+     * @return array<string, mixed>|null
+     */
+    private function findCoreMetrics(array $allMetrics, string $core): ?array
+    {
+        $prefix = 'solr.core.'.$core;
+
+        foreach ($allMetrics as $key => $value) {
+            if (($key === $prefix || str_starts_with($key, $prefix.'.')) && is_array($value)) {
+                return $value;
+            }
+        }
+
+        return null;
     }
 
     /**

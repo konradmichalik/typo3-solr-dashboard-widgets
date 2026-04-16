@@ -11,8 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
-use TYPO3\CMS\Core\Imaging\IconProvider\SvgSpriteIconProvider;
+use TYPO3\CMS\Core\Imaging\IconProvider\{SvgIconProvider, SvgSpriteIconProvider};
 
 return [
     'typo3-solr-dashboard-widgets' => [
