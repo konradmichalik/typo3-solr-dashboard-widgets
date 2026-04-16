@@ -21,7 +21,7 @@
                                 <f:if condition="{i.cycle} <= 5">
                                     <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1 border-0 gap-2">
                                         <span class="text-truncate" title="{term.keywords}">{term.keywords}</span>
-                                        <span class="badge solr-widget-badge solr-widget-badge--info rounded-pill flex-shrink-0" title="{f:format.number(decimals: 1, value: term.percent)} % of all searches with hits">{term.cnt}</span>
+                                        <span class="badge solr-widget-badge solr-widget-badge--info rounded-pill flex-shrink-0" title="{term.percent -> f:format.number(decimals: 1)} % of all searches with hits">{term.cnt}</span>
                                     </li>
                                 </f:if>
                             </f:for>
@@ -46,7 +46,7 @@
                                 <f:if condition="{i.cycle} <= 5">
                                     <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1 border-0 gap-2">
                                         <span class="text-truncate" title="{query.keywords}">{query.keywords}</span>
-                                        <span class="badge solr-widget-badge solr-widget-badge--danger rounded-pill flex-shrink-0" title="{f:format.number(decimals: 1, value: query.percent)} % of all no-hit searches">{query.cnt}</span>
+                                        <span class="badge solr-widget-badge solr-widget-badge--danger rounded-pill flex-shrink-0" title="{query.percent -> f:format.number(decimals: 1)} % of all no-hit searches">{query.cnt}</span>
                                     </li>
                                 </f:if>
                             </f:for>
