@@ -36,7 +36,7 @@ final class SolrMetricsDataProvider
     /** @var array<string, ?string> keyed by Solr base URI */
     private array $versionCache = [];
 
-    /** @var list<array{solrBaseUri: string, siteLabel: string, core: string}>|null */
+    /** @var list<array{solrBaseUri: string, siteLabel: string, core: string, auth: array{username: ?string, password: ?string}}>|null */
     private ?array $coresCache = null;
 
     public function __construct(
@@ -50,8 +50,8 @@ final class SolrMetricsDataProvider
      */
     public function getJvmMemory(): ?array
     {
-        foreach ($this->getUniqueHosts() as $solrBaseUri) {
-            $metrics = $this->fetchMetrics($solrBaseUri);
+        foreach ($this->getUniqueHosts() as $solrBaseUri => $auth) {
+            $metrics = $this->fetchMetrics($solrBaseUri, $auth);
             if (null === $metrics) {
                 continue;
             }
@@ -89,7 +89,7 @@ final class SolrMetricsDataProvider
         $anyReachable = false;
 
         foreach ($this->getCores() as $core) {
-            $metrics = $this->fetchMetrics($core['solrBaseUri']);
+            $metrics = $this->fetchMetrics($core['solrBaseUri'], $core['auth']);
             if (null === $metrics) {
                 continue;
             }
@@ -194,9 +194,9 @@ final class SolrMetricsDataProvider
      */
     public function getSolrVersion(): ?string
     {
-        foreach ($this->getUniqueHosts() as $solrBaseUri) {
+        foreach ($this->getUniqueHosts() as $solrBaseUri => $auth) {
             if (!array_key_exists($solrBaseUri, $this->versionCache)) {
-                $this->versionCache[$solrBaseUri] = $this->fetchSolrVersion($solrBaseUri);
+                $this->versionCache[$solrBaseUri] = $this->fetchSolrVersion($solrBaseUri, $auth);
             }
             if (null !== $this->versionCache[$solrBaseUri]) {
                 return $this->versionCache[$solrBaseUri];
@@ -206,13 +206,13 @@ final class SolrMetricsDataProvider
         return null;
     }
 
-    private function fetchSolrVersion(string $solrBaseUri): ?string
+    /**
+     * @param array{username: ?string, password: ?string} $auth
+     */
+    private function fetchSolrVersion(string $solrBaseUri, array $auth): ?string
     {
         try {
-            $response = $this->requestFactory->request($solrBaseUri.'admin/info/system?wt=json', 'GET', [
-                'timeout' => 3,
-                'connect_timeout' => 2,
-            ]);
+            $response = $this->requestFactory->request($solrBaseUri.'admin/info/system?wt=json', 'GET', $this->buildRequestOptions($auth));
             if (200 !== $response->getStatusCode()) {
                 return null;
             }
@@ -238,7 +238,7 @@ final class SolrMetricsDataProvider
         $anyReachable = false;
 
         foreach ($this->getCores() as $core) {
-            $metrics = $this->fetchMetrics($core['solrBaseUri']);
+            $metrics = $this->fetchMetrics($core['solrBaseUri'], $core['auth']);
             if (null === $metrics) {
                 continue;
             }
@@ -256,7 +256,7 @@ final class SolrMetricsDataProvider
     }
 
     /**
-     * @return list<array{solrBaseUri: string, siteLabel: string, core: string}>
+     * @return list<array{solrBaseUri: string, siteLabel: string, core: string, auth: array{username: ?string, password: ?string}}>
      */
     private function getCores(): array
     {
@@ -278,11 +278,31 @@ final class SolrMetricsDataProvider
                     'solrBaseUri' => $this->deriveSolrBase($endpoint->getCoreBaseUri(), $core),
                     'siteLabel' => $site->getLabel(),
                     'core' => $core,
+                    'auth' => ['username' => $endpoint->getAuthentication()['username'] ?? null, 'password' => $endpoint->getAuthentication()['password'] ?? null],
                 ];
             }
         }
 
         return $this->coresCache = $cores;
+    }
+
+    /**
+     * @param array{username: ?string, password: ?string} $auth
+     *
+     * @return array<string, mixed>
+     */
+    private function buildRequestOptions(array $auth): array
+    {
+        $options = [
+            'timeout' => 3,
+            'connect_timeout' => 2,
+        ];
+
+        if ('' !== ($auth['username'] ?? '')) {
+            $options['auth'] = [$auth['username'], $auth['password'] ?? ''];
+        }
+
+        return $options;
     }
 
     /**
@@ -301,22 +321,24 @@ final class SolrMetricsDataProvider
     }
 
     /**
-     * @return list<string>
+     * @return array<string, array{username: ?string, password: ?string}>
      */
     private function getUniqueHosts(): array
     {
         $hosts = [];
         foreach ($this->getCores() as $core) {
-            $hosts[$core['solrBaseUri']] = true;
+            $hosts[$core['solrBaseUri']] = $core['auth'];
         }
 
-        return array_keys($hosts);
+        return $hosts;
     }
 
     /**
+     * @param array{username: ?string, password: ?string} $auth
+     *
      * @return array<mixed>|null
      */
-    private function fetchMetrics(string $solrBaseUri): ?array
+    private function fetchMetrics(string $solrBaseUri, array $auth): ?array
     {
         if (array_key_exists($solrBaseUri, $this->metricsCache)) {
             return $this->metricsCache[$solrBaseUri];
@@ -325,10 +347,7 @@ final class SolrMetricsDataProvider
         $url = $solrBaseUri.'admin/metrics?wt=json&group=jvm,core&prefix=memory.heap,QUERY./select.requestTimes,CACHE.searcher';
 
         try {
-            $response = $this->requestFactory->request($url, 'GET', [
-                'timeout' => 3,
-                'connect_timeout' => 2,
-            ]);
+            $response = $this->requestFactory->request($url, 'GET', $this->buildRequestOptions($auth));
             if (200 !== $response->getStatusCode()) {
                 return $this->metricsCache[$solrBaseUri] = null;
             }

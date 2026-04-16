@@ -45,8 +45,8 @@ final readonly class DocumentsInIndexDataProvider
         $total = 0;
         $anyReachable = false;
 
-        foreach ($this->collectCoreEndpoints() as $coreUri) {
-            $data = $this->fetchFacetCounts($coreUri);
+        foreach ($this->collectCoreEndpoints() as ['url' => $coreUri, 'auth' => $auth]) {
+            $data = $this->fetchFacetCounts($coreUri, $auth);
             if (null === $data) {
                 continue;
             }
@@ -69,11 +69,11 @@ final readonly class DocumentsInIndexDataProvider
     }
 
     /**
-     * @return list<string> `/select` base URIs for every configured Solr core
+     * @return list<array{url: string, auth: array{username: ?string, password: ?string}}>
      */
     private function collectCoreEndpoints(): array
     {
-        $uris = [];
+        $endpoints = [];
         foreach ($this->siteRepository->getAvailableSites() as $site) {
             try {
                 $connections = $this->connectionManager->getConnectionsBySite($site);
@@ -81,24 +81,26 @@ final readonly class DocumentsInIndexDataProvider
                 continue;
             }
             foreach ($connections as $connection) {
-                $uris[] = $connection->getEndpoint('read')->getCoreBaseUri()
-                    .'select?q=*:*&rows=0&facet=true&facet.field=type&facet.mincount=1&wt=json';
+                $endpoint = $connection->getEndpoint('read');
+                $endpoints[] = [
+                    'url' => $endpoint->getCoreBaseUri().'select?q=*:*&rows=0&facet=true&facet.field=type&facet.mincount=1&wt=json',
+                    'auth' => ['username' => $endpoint->getAuthentication()['username'] ?? null, 'password' => $endpoint->getAuthentication()['password'] ?? null],
+                ];
             }
         }
 
-        return $uris;
+        return $endpoints;
     }
 
     /**
+     * @param array{username: ?string, password: ?string} $auth
+     *
      * @return array<string, mixed>|null parsed JSON response, or null if unreachable
      */
-    private function fetchFacetCounts(string $url): ?array
+    private function fetchFacetCounts(string $url, array $auth): ?array
     {
         try {
-            $response = $this->requestFactory->request($url, 'GET', [
-                'timeout' => 3,
-                'connect_timeout' => 2,
-            ]);
+            $response = $this->requestFactory->request($url, 'GET', $this->buildRequestOptions($auth));
             if (200 !== $response->getStatusCode()) {
                 return null;
             }
@@ -127,5 +129,24 @@ final readonly class DocumentsInIndexDataProvider
             }
             $perType[$type] = ($perType[$type] ?? 0) + $count;
         }
+    }
+
+    /**
+     * @param array{username: ?string, password: ?string} $auth
+     *
+     * @return array<string, mixed>
+     */
+    private function buildRequestOptions(array $auth): array
+    {
+        $options = [
+            'timeout' => 3,
+            'connect_timeout' => 2,
+        ];
+
+        if ('' !== ($auth['username'] ?? '')) {
+            $options['auth'] = [$auth['username'], $auth['password'] ?? ''];
+        }
+
+        return $options;
     }
 }
