@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace KonradMichalik\SolrDashboardWidgets\DataProvider;
 
-use TYPO3\CMS\Core\Database\ConnectionPool;
+use Throwable;
+use TYPO3\CMS\Core\Database\{Connection, ConnectionPool};
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 
 /**
  * LastIndexingRunDataProvider.
@@ -36,15 +38,14 @@ final readonly class LastIndexingRunDataProvider
     public function getLastRun(): ?array
     {
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
+        $queryBuilder->getRestrictions()->removeAll();
 
         $row = $queryBuilder
             ->select('lastexecution_time')
             ->from(self::TABLE)
             ->where(
-                $queryBuilder->expr()->like(
-                    'serialized_task_object',
-                    $queryBuilder->createNamedParameter('%Solr%'),
-                ),
+                $this->buildSolrTaskCondition($queryBuilder),
+                $queryBuilder->expr()->gt('lastexecution_time', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT)),
             )
             ->orderBy('lastexecution_time', 'DESC')
             ->setMaxResults(1)
@@ -68,17 +69,15 @@ final readonly class LastIndexingRunDataProvider
     public function getNextRun(): ?array
     {
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
+        $queryBuilder->getRestrictions()->removeAll();
 
         $row = $queryBuilder
             ->select('nextexecution')
             ->from(self::TABLE)
             ->where(
-                $queryBuilder->expr()->like(
-                    'serialized_task_object',
-                    $queryBuilder->createNamedParameter('%Solr%'),
-                ),
-                $queryBuilder->expr()->eq('disable', $queryBuilder->createNamedParameter(0, \TYPO3\CMS\Core\Database\Connection::PARAM_INT)),
-                $queryBuilder->expr()->gt('nextexecution', $queryBuilder->createNamedParameter(0, \TYPO3\CMS\Core\Database\Connection::PARAM_INT)),
+                $this->buildSolrTaskCondition($queryBuilder),
+                $queryBuilder->expr()->eq('disable', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT)),
+                $queryBuilder->expr()->gt('nextexecution', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT)),
             )
             ->orderBy('nextexecution', 'ASC')
             ->setMaxResults(1)
@@ -149,5 +148,45 @@ final readonly class LastIndexingRunDataProvider
         }
 
         return (int) ($diff / 86400).' days';
+    }
+
+    /**
+     * Match Solr-related scheduler tasks regardless of TYPO3 version.
+     *
+     * v13 stores the full object in `serialized_task_object`; v14+ added a
+     * dedicated `task_class` column. We check for the column at runtime so
+     * the same code runs on both versions.
+     */
+    private function buildSolrTaskCondition(QueryBuilder $queryBuilder): string
+    {
+        if ($this->isTableColumnAvailable('task_class')) {
+            return $queryBuilder->expr()->like(
+                'task_class',
+                $queryBuilder->createNamedParameter('%Solr%'),
+            );
+        }
+
+        return $queryBuilder->expr()->like(
+            'serialized_task_object',
+            $queryBuilder->createNamedParameter('%Solr%'),
+        );
+    }
+
+    /**
+     * Probes the database for a column by running a SELECT. A missing column
+     * triggers an exception; an empty table returns false from fetchOne() but
+     * that's fine — no rows means no Solr tasks either way.
+     */
+    private function isTableColumnAvailable(string $column): bool
+    {
+        try {
+            $this->connectionPool
+                ->getConnectionForTable(self::TABLE)
+                ->fetchOne('SELECT `'.$column.'` FROM `'.self::TABLE.'` LIMIT 1');
+
+            return true;
+        } catch (Throwable) {
+            return false;
+        }
     }
 }
