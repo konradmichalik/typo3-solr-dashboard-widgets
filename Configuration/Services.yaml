@@ -47,7 +47,7 @@ services:
         groupNames: 'solr'
         title: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.connectionStatus.title'
         description: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.connectionStatus.description'
-        iconIdentifier: 'typo3-solr-dashboard-widgets'
+        iconIdentifier: 'typo3-solr-dashboard-widgets-connection-status'
         height: 'medium'
         width: 'small'
 
@@ -60,7 +60,7 @@ services:
         groupNames: 'solr'
         title: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueStatus.title'
         description: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueStatus.description'
-        iconIdentifier: 'typo3-solr-dashboard-widgets'
+        iconIdentifier: 'typo3-solr-dashboard-widgets-index-queue-status'
         height: 'medium'
         width: 'small'
 
@@ -73,7 +73,7 @@ services:
         groupNames: 'solr'
         title: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueErrors.title'
         description: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.indexQueueErrors.description'
-        iconIdentifier: 'typo3-solr-dashboard-widgets'
+        iconIdentifier: 'typo3-solr-dashboard-widgets-index-queue-errors'
         height: 'medium'
         width: 'medium'
 
@@ -86,7 +86,7 @@ services:
         groupNames: 'solr'
         title: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.documentsInIndex.title'
         description: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.documentsInIndex.description'
-        iconIdentifier: 'typo3-solr-dashboard-widgets'
+        iconIdentifier: 'typo3-solr-dashboard-widgets-documents-in-index'
         height: 'medium'
         width: 'medium'
 
@@ -99,7 +99,7 @@ services:
         groupNames: 'solr'
         title: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.lastIndexingRun.title'
         description: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.lastIndexingRun.description'
-        iconIdentifier: 'typo3-solr-dashboard-widgets'
+        iconIdentifier: 'typo3-solr-dashboard-widgets-last-indexing-run'
         height: 'medium'
         width: 'small'
 
@@ -112,7 +112,7 @@ services:
         groupNames: 'solr'
         title: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchVolume.title'
         description: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchVolume.description'
-        iconIdentifier: 'typo3-solr-dashboard-widgets'
+        iconIdentifier: 'typo3-solr-dashboard-widgets-search-volume'
         height: 'medium'
         width: 'medium'
 
@@ -125,7 +125,7 @@ services:
         groupNames: 'solr'
         title: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchTerms.title'
         description: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.searchTerms.description'
-        iconIdentifier: 'typo3-solr-dashboard-widgets'
+        iconIdentifier: 'typo3-solr-dashboard-widgets-search-terms'
         height: 'medium'
         width: 'small'
 
@@ -138,7 +138,7 @@ services:
         groupNames: 'solr'
         title: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.solrHealth.title'
         description: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.solrHealth.description'
-        iconIdentifier: 'typo3-solr-dashboard-widgets'
+        iconIdentifier: 'typo3-solr-dashboard-widgets-solr-health'
         height: 'medium'
         width: 'small'
 
@@ -151,7 +151,7 @@ services:
         groupNames: 'solr'
         title: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.cacheHitRates.title'
         description: 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:widget.cacheHitRates.description'
-        iconIdentifier: 'typo3-solr-dashboard-widgets'
+        iconIdentifier: 'typo3-solr-dashboard-widgets-cache-hit-rates'
         height: 'medium'
         width: 'small'
 
