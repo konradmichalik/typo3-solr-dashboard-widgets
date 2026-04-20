@@ -34,7 +34,7 @@ for V in 13 14; do
         );
         \$task = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\ApacheSolrForTypo3\Solr\Task\IndexQueueWorkerTask::class);
         \$now = time();
-        \$connection->insert('tx_scheduler_task', [
+        \$row = [
             'crdate' => \$now,
             'disable' => 0,
             'description' => 'Solr Index Queue Worker (demo)',
@@ -45,7 +45,12 @@ for V in 13 14; do
             'lastexecution_context' => 'CLI',
             'serialized_task_object' => serialize(\$task),
             'serialized_executions' => '',
-        ]);
+        ];
+        try {
+            \$connection->fetchOne('SELECT tasktype FROM tx_scheduler_task LIMIT 1');
+            \$row['tasktype'] = \ApacheSolrForTypo3\Solr\Task\IndexQueueWorkerTask::class;
+        } catch (\Throwable) {}
+        \$connection->insert('tx_scheduler_task', \$row);
         \$uid = (int)\$connection->lastInsertId();
         \$task->setTaskUid(\$uid);
         \$connection->update(
