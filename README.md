@@ -69,11 +69,27 @@ Open **Dashboard** in the TYPO3 backend, click **+** in a tab strip and pick **S
 
 All widgets appear in a dedicated **Apache Solr** group in the "Add widget" dialog. Each widget reads data from Solr and/or EXT:solr directly — no persistent state of its own is stored.
 
+| Widget | Source |
+|--------|--------|
+| [Connection Status](#connection-status) | EXT:solr connections |
+| [Solr Health](#solr-health) | Solr `/admin/metrics` + `/admin/info/system` |
+| [Last Indexing Run](#last-indexing-run) | `tx_scheduler_task` |
+| [Index Queue Status](#index-queue-status) | `tx_solr_indexqueue_item` |
+| [Index Queue Errors](#index-queue-errors) | `tx_solr_indexqueue_item` |
+| [Documents in Index by Type](#documents-in-index-by-type) | Solr facet API |
+| [Search Volume (last 14 days)](#search-volume-last-14-days) | `tx_solr_statistics` |
+| [Search Terms](#search-terms) | `tx_solr_statistics` |
+| [Cache Hit Rates](#cache-hit-rates) | Solr `/admin/metrics` |
+
 ### [Connection Status](Classes/Widgets/ConnectionStatusWidget.php)
+
+![Connection Status](Documentation/Images/widget-connection-status.jpg)
 
 One card per configured TYPO3 site, listing every Solr core with a live ping result (`OK` / `offline`). Reaches out to Solr on every dashboard refresh.
 
 ### [Solr Health](Classes/Widgets/SolrHealthWidget.php)
+
+![Solr Health](Documentation/Images/widget-solr-health.jpg)
 
 Combined node-level health check:
 
@@ -85,6 +101,8 @@ Data is pulled from Solr's `/admin/metrics` and `/admin/info/system` endpoints, 
 
 ### [Last Indexing Run](Classes/Widgets/LastIndexingRunWidget.php)
 
+![Last Indexing Run](Documentation/Images/widget-last-indexing-run.jpg)
+
 Shows the most recent execution of any Solr-related scheduler task (e.g. `IndexQueueWorkerTask`) with a human-readable "N minutes ago" and a status badge (OK / warning / error based on age thresholds). Also lists the next scheduled run.
 
 > [!TIP]
@@ -92,17 +110,25 @@ Shows the most recent execution of any Solr-related scheduler task (e.g. `IndexQ
 
 ### [Index Queue Status](Classes/Widgets/IndexQueueStatusWidget.php)
 
+![Index Queue Status](Documentation/Images/widget-index-queue-status.jpg)
+
 Doughnut chart of `tx_solr_indexqueue_item` entries grouped into *Indexed* / *Pending* / *Failed*.
 
 ### [Index Queue Errors](Classes/Widgets/IndexQueueErrorsWidget.php)
+
+![Index Queue Errors](Documentation/Images/widget-index-queue-errors.jpg)
 
 Table of the most recent queue entries with a non-empty `errors` column, including record type, uid, truncated error message (full text on hover), and timestamp.
 
 ### [Documents in Index by Type](Classes/Widgets/DocumentsInIndexWidget.php)
 
+![Documents in Index by Type](Documentation/Images/widget-documents-in-index.jpg)
+
 Bar chart of document counts **per `type` field value**, aggregated across all reachable cores via Solr's facet API (`facet.field=type`). Reflects what is actually in the index, not what is waiting in the TYPO3 queue.
 
 ### [Search Volume (last 14 days)](Classes/Widgets/SearchVolumeWidget.php)
+
+![Search Volume](Documentation/Images/widget-search-volume.jpg)
 
 Line chart of daily search volume over the last 14 days, read from `tx_solr_statistics`.
 
@@ -114,14 +140,21 @@ Line chart of daily search volume over the last 14 days, read from `tx_solr_stat
 
 ### [Search Terms](Classes/Widgets/SearchTermsWidget.php)
 
+![Search Terms](Documentation/Images/widget-search-terms.jpg)
+
 Two stacked lists: **Top Queries** (top 5 by count) and **Queries Without Results**. Uses the same `tx_solr_statistics` data source as Search Volume — the same TypoScript flag is required.
 
 ### [Cache Hit Rates](Classes/Widgets/CacheHitRatesWidget.php)
 
-> [!NOTE]
-> Not part of the default preset — available individually via the widget picker.
+![Cache Hit Rates](Documentation/Images/widget-cache-hit-rates.jpg)
 
-Aggregated hit ratios for the three Solr searcher caches (`filterCache`, `queryResultCache`, `documentCache`) shown as progress bars. Useful for spotting cache tuning opportunities.
+> [!NOTE]
+> The three Solr searcher caches:
+> - **Filter Cache** — stores results of filter queries (`fq`). A low hit rate often means highly unique or frequently changing filter combinations.
+> - **Query Result Cache** — caches ordered document-ID lists for query + sort combinations. Drops when users rarely repeat the same search.
+> - **Document Cache** — caches stored-field lookups by document ID. Low rates indicate many unique documents being fetched (typically fine for diverse indices).
+
+Aggregated hit ratios shown as progress bars. Useful for spotting cache tuning opportunities.
 
 ## 🎯 Dashboard preset
 
