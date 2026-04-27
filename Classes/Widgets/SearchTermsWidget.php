@@ -28,8 +28,8 @@ final class SearchTermsWidget implements WidgetInterface, RequestAwareWidgetInte
     use DashboardWidgetViewTrait;
 
     private const WINDOW_DAYS = 30;
-    private const TOP_LIMIT = 10;
-    private const NOHIT_LIMIT = 5;
+    private const TOP_LIMIT = 3;
+    private const NOHIT_LIMIT = 3;
 
     private ServerRequestInterface $request;
 

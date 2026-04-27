@@ -142,7 +142,7 @@ Line chart of daily search volume over the last 14 days, read from `tx_solr_stat
 
 ![Search Terms](Documentation/Images/widget-search-terms.jpg)
 
-Two stacked lists: **Top Queries** (top 5 by count) and **Queries Without Results**. Uses the same `tx_solr_statistics` data source as Search Volume — the same TypoScript flag is required.
+Two stacked lists: **Top Queries** (top 3 by count) and **Queries Without Results** (top 3). Uses the same `tx_solr_statistics` data source as Search Volume — the same TypoScript flag is required.
 
 ### [Cache Hit Rates](Classes/Widgets/CacheHitRatesWidget.php)
 
