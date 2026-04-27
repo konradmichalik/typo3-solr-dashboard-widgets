@@ -144,6 +144,8 @@ Line chart of daily search volume over the last 14 days, read from `tx_solr_stat
 
 Two stacked lists: **Top Queries** (top 3 by count) and **Queries Without Results** (top 3). Uses the same `tx_solr_statistics` data source as Search Volume — the same TypoScript flag is required.
 
+The "Top Search Terms" heading carries a compact storage indicator (e.g. `1.2M`) for the underlying `tx_solr_statistics` table. Hover for the exact row count and the timestamp of the oldest entry. The indicator turns yellow once the table exceeds **1M rows** and red beyond **5M rows**, with the tooltip suggesting a scheduler cleanup task — `tx_solr_statistics` grows unbounded with every search and benefits from periodic pruning on busy sites.
+
 ### [Cache Hit Rates](Classes/Widgets/CacheHitRatesWidget.php)
 
 ![Cache Hit Rates](Documentation/Images/widget-cache-hit-rates.jpg)
