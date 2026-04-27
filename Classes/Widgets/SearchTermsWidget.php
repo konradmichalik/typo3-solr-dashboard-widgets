@@ -15,9 +15,9 @@ namespace KonradMichalik\SolrDashboardWidgets\Widgets;
 
 use KonradMichalik\SolrDashboardWidgets\DataProvider\SearchStatisticsDataProvider;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
 use TYPO3\CMS\Dashboard\Widgets\{AdditionalCssInterface, ButtonProviderInterface, RequestAwareWidgetInterface, WidgetConfigurationInterface, WidgetInterface};
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function sprintf;
 
@@ -115,22 +115,27 @@ final class SearchTermsWidget implements WidgetInterface, RequestAwareWidgetInte
 
     private function buildTooltip(int $total, ?int $oldestTimestamp, string $severity): string
     {
-        $extension = 'typo3_solr_dashboard_widgets';
-        $tooltip = number_format($total).' '.(string) LocalizationUtility::translate('widget.searchStatistics.totalEntries', $extension);
+        $lang = $this->getLanguageService();
+        $prefix = 'LLL:EXT:typo3_solr_dashboard_widgets/Resources/Private/Language/locallang.xlf:';
+        $tooltip = number_format($total).' '.$lang->sL($prefix.'widget.searchStatistics.totalEntries');
 
         if (null !== $oldestTimestamp) {
-            $tooltip .= ' · '.(string) LocalizationUtility::translate(
-                'widget.searchStatistics.oldestEntry',
-                $extension,
-                [date('Y-m-d', $oldestTimestamp)],
+            $tooltip .= ' · '.sprintf(
+                $lang->sL($prefix.'widget.searchStatistics.oldestEntry'),
+                date('Y-m-d', $oldestTimestamp),
             );
         }
 
         if ('normal' !== $severity) {
-            $tooltip .= ' · '.(string) LocalizationUtility::translate('widget.searchStatistics.cleanupHint', $extension);
+            $tooltip .= ' · '.$lang->sL($prefix.'widget.searchStatistics.cleanupHint');
         }
 
         return $tooltip;
+    }
+
+    private function getLanguageService(): LanguageService
+    {
+        return $GLOBALS['LANG'];
     }
 
     private function severityFor(int $total): string
