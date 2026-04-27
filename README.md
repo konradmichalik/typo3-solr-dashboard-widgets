@@ -1,6 +1,6 @@
 <div align="center">
 
-![Extension icon](Resources/Public/Icons/Extension.svg)
+![Extension icon](Resources/Public/Icons/Extension.png)
 
 # TYPO3 extension `typo3_solr_dashboard_widgets`
 
@@ -69,17 +69,17 @@ Open **Dashboard** in the TYPO3 backend, click **+** in a tab strip and pick **S
 
 All widgets appear in a dedicated **Apache Solr** group in the "Add widget" dialog. Each widget reads data from Solr and/or EXT:solr directly — no persistent state of its own is stored.
 
-| Widget | Source |
-|--------|--------|
-| [Connection Status](#connection-status) | EXT:solr connections |
-| [Solr Health](#solr-health) | Solr `/admin/metrics` + `/admin/info/system` |
-| [Last Indexing Run](#last-indexing-run) | `tx_scheduler_task` |
-| [Index Queue Status](#index-queue-status) | `tx_solr_indexqueue_item` |
-| [Index Queue Errors](#index-queue-errors) | `tx_solr_indexqueue_item` |
-| [Documents in Index by Type](#documents-in-index-by-type) | Solr facet API |
-| [Search Volume (last 14 days)](#search-volume-last-14-days) | `tx_solr_statistics` |
-| [Search Terms](#search-terms) | `tx_solr_statistics` |
-| [Cache Hit Rates](#cache-hit-rates) | Solr `/admin/metrics` |
+| Icon | Widget | Source |
+|--------|--------|--------|
+| <img src="Resources/Public/Icons/solr-dashboard-widget-status.svg" width="32" height="32" alt=""> | [Connection Status](#connection-status) | EXT:solr connections |
+| <img src="Resources/Public/Icons/solr-dashboard-widget-health.svg" width="32" height="32" alt=""> | [Solr Health](#solr-health) | Solr `/admin/metrics` + `/admin/info/system` |
+| <img src="Resources/Public/Icons/solr-dashboard-widget-last-run.svg" width="32" height="32" alt=""> | [Last Indexing Run](#last-indexing-run) | `tx_scheduler_task` |
+| <img src="Resources/Public/Icons/solr-dashboard-widget-queue.svg" width="32" height="32" alt=""> | [Index Queue Status](#index-queue-status) | `tx_solr_indexqueue_item` |
+| <img src="Resources/Public/Icons/solr-dashboard-widget-errors.svg" width="32" height="32" alt=""> | [Index Queue Errors](#index-queue-errors) | `tx_solr_indexqueue_item` |
+| <img src="Resources/Public/Icons/solr-dashboard-widget-index-by-type.svg" width="32" height="32" alt=""> | [Documents in Index by Type](#documents-in-index-by-type) | Solr facet API |
+| <img src="Resources/Public/Icons/solr-dashboard-widget-search-volume.svg" width="32" height="32" alt=""> | [Search Volume (last 14 days)](#search-volume-last-14-days) | `tx_solr_statistics` |
+| <img src="Resources/Public/Icons/solr-dashboard-widget-search-words.svg" width="32" height="32" alt=""> | [Search Terms](#search-terms) | `tx_solr_statistics` |
+| <img src="Resources/Public/Icons/solr-dashboard-widget-cache-hits.svg" width="32" height="32" alt=""> | [Cache Hit Rates](#cache-hit-rates) | Solr `/admin/metrics` |
 
 ### [Connection Status](Classes/Widgets/ConnectionStatusWidget.php)
 
