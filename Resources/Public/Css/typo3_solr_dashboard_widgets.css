@@ -33,3 +33,16 @@
     text-underline-offset: 3px;
     cursor: help;
 }
+
+/*
+ * Severity tints for inline hints (e.g., growing-table indicator). Uses the
+ * same palette as `.solr-widget-badge--*` so unreachable / overflowing states
+ * read consistently across widgets.
+ */
+.solr-widget-hint--warning {
+    color: #c89c3c;
+}
+
+.solr-widget-hint--danger {
+    color: #c83c3c;
+}

@@ -162,6 +162,18 @@
 				<source>Enable plugin.tx_solr.statistics = 1 in your TypoScript configuration.</source>
 				<target>Aktiviere plugin.tx_solr.statistics = 1 in deinem TypoScript.</target>
 			</trans-unit>
+			<trans-unit id="widget.searchStatistics.totalEntries" resname="widget.searchStatistics.totalEntries">
+				<source>total entries in tx_solr_statistics</source>
+				<target>Einträge gesamt in tx_solr_statistics</target>
+			</trans-unit>
+			<trans-unit id="widget.searchStatistics.oldestEntry" resname="widget.searchStatistics.oldestEntry">
+				<source>oldest entry: %s</source>
+				<target>ältester Eintrag: %s</target>
+			</trans-unit>
+			<trans-unit id="widget.searchStatistics.cleanupHint" resname="widget.searchStatistics.cleanupHint">
+				<source>consider running a scheduler cleanup task</source>
+				<target>Cleanup-Scheduler-Task empfohlen</target>
+			</trans-unit>
 
 			<trans-unit id="preset.solrOverview.title" resname="preset.solrOverview.title">
 				<source>Solr Overview</source>

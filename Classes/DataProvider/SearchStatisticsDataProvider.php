@@ -64,6 +64,41 @@ final readonly class SearchStatisticsDataProvider
     }
 
     /**
+     * Returns the total row count of the statistics table and the timestamp
+     * of its oldest entry. Useful as a maintenance hint — the table grows
+     * unbounded with every search and can become large over time.
+     *
+     * @return array{total: int, oldestTimestamp: int|null}|null
+     */
+    public function getStatisticsTableMeta(): ?array
+    {
+        try {
+            $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
+
+            $row = $queryBuilder
+                ->selectLiteral($queryBuilder->expr()->count('*', 'cnt'))
+                ->addSelectLiteral($queryBuilder->expr()->min('tstamp', 'oldest'))
+                ->from(self::TABLE)
+                ->executeQuery()
+                ->fetchAssociative();
+        } catch (Throwable) {
+            return null;
+        }
+
+        if (false === $row) {
+            return ['total' => 0, 'oldestTimestamp' => null];
+        }
+
+        $total = (int) $row['cnt'];
+        $oldest = isset($row['oldest']) ? (int) $row['oldest'] : 0;
+
+        return [
+            'total' => $total,
+            'oldestTimestamp' => $oldest > 0 ? $oldest : null,
+        ];
+    }
+
+    /**
      * @return list<array{day: string, cnt: int}>
      */
     public function getSearchVolumePerDay(int $days = 14): array
