@@ -172,6 +172,65 @@ final class SearchStatisticsDataProviderTest extends TestCase
         self::assertSame([], $result);
     }
 
+    public function testGetStatisticsTableMetaReturnsTotalAndOldestTimestamp(): void
+    {
+        $queryBuilder = $this->createMetaQueryBuilder(['cnt' => 1234567, 'oldest' => 1700000000]);
+        $this->connectionPool
+            ->method('getQueryBuilderForTable')
+            ->willReturn($queryBuilder);
+
+        $result = $this->subject->getStatisticsTableMeta();
+
+        self::assertNotNull($result);
+        self::assertSame(1234567, $result['total']);
+        self::assertSame(1700000000, $result['oldestTimestamp']);
+    }
+
+    public function testGetStatisticsTableMetaReturnsZeroAndNullForEmptyTable(): void
+    {
+        $queryBuilder = $this->createMetaQueryBuilder(['cnt' => 0, 'oldest' => null]);
+        $this->connectionPool
+            ->method('getQueryBuilderForTable')
+            ->willReturn($queryBuilder);
+
+        $result = $this->subject->getStatisticsTableMeta();
+
+        self::assertNotNull($result);
+        self::assertSame(0, $result['total']);
+        self::assertNull($result['oldestTimestamp']);
+    }
+
+    public function testGetStatisticsTableMetaReturnsNullOnException(): void
+    {
+        $this->connectionPool
+            ->method('getQueryBuilderForTable')
+            ->willThrowException(new RuntimeException('DB not available'));
+
+        self::assertNull($this->subject->getStatisticsTableMeta());
+    }
+
+    /**
+     * @param array<string, mixed> $row
+     */
+    private function createMetaQueryBuilder(array $row): QueryBuilder&MockObject
+    {
+        $expr = $this->createMock(ExpressionBuilder::class);
+        $expr->method('count')->willReturn('COUNT(*)');
+        $expr->method('min')->willReturn('MIN(tstamp)');
+
+        $resultStub = $this->createMock(Result::class);
+        $resultStub->method('fetchAssociative')->willReturn($row);
+
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $queryBuilder->method('expr')->willReturn($expr);
+        $queryBuilder->method('selectLiteral')->willReturnSelf();
+        $queryBuilder->method('addSelectLiteral')->willReturnSelf();
+        $queryBuilder->method('from')->willReturnSelf();
+        $queryBuilder->method('executeQuery')->willReturn($resultStub);
+
+        return $queryBuilder;
+    }
+
     /**
      * Creates a fully mocked QueryBuilder whose fluent chain returns itself,
      * whose executeQuery() returns a Result stub yielding $rows for

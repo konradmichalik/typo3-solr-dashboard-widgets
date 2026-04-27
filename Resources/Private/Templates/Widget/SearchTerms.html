@@ -11,8 +11,15 @@
         </f:then>
         <f:else>
             <div class="mb-3">
-                <h6 class="text-uppercase text-muted small mb-2">
-                    <f:translate key="widget.searchStatistics.topSearchTerms" extensionName="typo3_solr_dashboard_widgets" />
+                <h6 class="text-uppercase text-muted small mb-2 d-flex justify-content-between align-items-baseline gap-2">
+                    <span>
+                        <f:translate key="widget.searchStatistics.topSearchTerms" extensionName="typo3_solr_dashboard_widgets" />
+                    </span>
+                    <f:if condition="{statsMetaTotal}">
+                        <span class="solr-widget-hint{statsMetaSeverityClass} fw-normal text-lowercase" title="{statsMetaTooltip}">
+                            {statsMetaTotal}
+                        </span>
+                    </f:if>
                 </h6>
                 <f:if condition="{topTerms}">
                     <f:then>

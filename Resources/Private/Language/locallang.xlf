@@ -138,6 +138,15 @@
 			<trans-unit id="widget.searchStatistics.activationHint" resname="widget.searchStatistics.activationHint">
 				<source>Enable plugin.tx_solr.statistics = 1 in your TypoScript configuration.</source>
 			</trans-unit>
+			<trans-unit id="widget.searchStatistics.totalEntries" resname="widget.searchStatistics.totalEntries">
+				<source>total entries in tx_solr_statistics</source>
+			</trans-unit>
+			<trans-unit id="widget.searchStatistics.oldestEntry" resname="widget.searchStatistics.oldestEntry">
+				<source>oldest entry: %s</source>
+			</trans-unit>
+			<trans-unit id="widget.searchStatistics.cleanupHint" resname="widget.searchStatistics.cleanupHint">
+				<source>consider running a scheduler cleanup task</source>
+			</trans-unit>
 
 			<trans-unit id="preset.solrSearchInsights.title" resname="preset.solrSearchInsights.title">
 				<source>Solr Search Insights</source>
