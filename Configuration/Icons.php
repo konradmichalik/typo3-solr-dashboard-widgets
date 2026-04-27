@@ -21,46 +21,46 @@ return [
     ],
     'typo3-solr-dashboard-widgets-connection-status' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/widget-connection-status.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/solr-dashboard-widget-status.svg',
     ],
     'typo3-solr-dashboard-widgets-index-queue-status' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/widget-index-queue-status.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/solr-dashboard-widget-queue.svg',
     ],
     'typo3-solr-dashboard-widgets-index-queue-errors' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/widget-index-queue-errors.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/solr-dashboard-widget-errors.svg',
     ],
     'typo3-solr-dashboard-widgets-documents-in-index' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/widget-documents-in-index.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/solr-dashboard-widget-index-by-type.svg',
     ],
     'typo3-solr-dashboard-widgets-last-indexing-run' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/widget-last-indexing-run.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/solr-dashboard-widget-last-run.svg',
     ],
     'typo3-solr-dashboard-widgets-search-volume' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/widget-search-volume.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/solr-dashboard-widget-search-volume.svg',
     ],
     'typo3-solr-dashboard-widgets-search-terms' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/widget-search-terms.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/solr-dashboard-widget-search-words.svg',
     ],
     'typo3-solr-dashboard-widgets-solr-health' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/widget-solr-health.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/solr-dashboard-widget-health.svg',
     ],
     'typo3-solr-dashboard-widgets-cache-hit-rates' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/widget-cache-hit-rates.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/solr-dashboard-widget-cache-hits.svg',
     ],
     'typo3-solr-dashboard-widgets-preset-search-insights' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/preset-search-insights.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/solr-dashboard-widget-preset-editor.svg',
     ],
     'typo3-solr-dashboard-widgets-preset-overview' => [
         'provider' => SvgIconProvider::class,
-        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/preset-overview.svg',
+        'source' => 'EXT:typo3_solr_dashboard_widgets/Resources/Public/Icons/solr-dashboard-widget-preset.svg',
     ],
 ];

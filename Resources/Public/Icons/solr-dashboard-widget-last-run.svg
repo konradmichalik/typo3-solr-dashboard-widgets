@@ -1,0 +1,24 @@
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g transform="matrix(1,0,0,1,-210,-65)">
+        <g id="Solr-Dashboard-Widgets---Last-Run" serif:id="Solr Dashboard Widgets - Last Run" transform="matrix(0.24,0,0,0.24,209.52,65.24)">
+            <rect x="2" y="-1" width="100" height="100" style="fill:none;"/>
+            <g transform="matrix(4.487179,0,0,4.861111,-677.166667,-325.305556)">
+                <path d="M169,74L169,80C169,81.656 167.544,83 165.75,83L159.25,83C157.456,83 156,81.656 156,80L156,74C156,72.344 157.456,71 159.25,71L165.75,71C167.544,71 169,72.344 169,74Z" style="fill:rgb(87,117,144);"/>
+            </g>
+            <g transform="matrix(5.555556,0,0,5.555556,-1181.333333,-378.777778)">
+                <circle cx="222" cy="77" r="3" style="fill-opacity:0.4;"/>
+            </g>
+            <g transform="matrix(5.555556,0,0,5.555556,-1181.333333,-378.777778)">
+                <circle cx="222" cy="77" r="3" style="fill:none;stroke:black;stroke-width:0.78px;"/>
+            </g>
+            <g transform="matrix(4.166667,0,0,4.166667,-873,-271.833333)">
+                <path d="M222,75L222,77L223,78" style="fill:none;stroke:black;stroke-width:1.04px;"/>
+            </g>
+            <g transform="matrix(4.487179,0,0,4.861111,-677.166667,-325.305556)">
+                <path d="M169.484,74L169.484,80C169.484,81.902 167.811,83.446 165.75,83.446L159.25,83.446C157.189,83.446 155.516,81.902 155.516,80L155.516,74C155.516,72.098 157.189,70.554 159.25,70.554L165.75,70.554C167.811,70.554 169.484,72.098 169.484,74ZM168.516,74C168.516,72.591 167.277,71.446 165.75,71.446L159.25,71.446C157.723,71.446 156.484,72.591 156.484,74L156.484,80C156.484,81.409 157.723,82.554 159.25,82.554L165.75,82.554C167.277,82.554 168.516,81.409 168.516,80L168.516,74Z"/>
+            </g>
+        </g>
+        <g id="Colors">
+        </g>
+    </g>
+</svg>
