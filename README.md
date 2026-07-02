@@ -11,6 +11,7 @@
 [![Coverage](https://img.shields.io/coverallsCoverage/github/konradmichalik/typo3-solr-dashboard-widgets?logo=coveralls)](https://coveralls.io/github/konradmichalik/typo3-solr-dashboard-widgets)
 [![CGL](https://img.shields.io/github/actions/workflow/status/konradmichalik/typo3-solr-dashboard-widgets/cgl.yml?label=cgl&logo=github)](https://github.com/konradmichalik/typo3-solr-dashboard-widgets/actions/workflows/cgl.yml)
 [![Tests](https://img.shields.io/github/actions/workflow/status/konradmichalik/typo3-solr-dashboard-widgets/tests.yml?label=tests&logo=github)](https://github.com/konradmichalik/typo3-solr-dashboard-widgets/actions/workflows/tests.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/konradmichalik/typo3-solr-dashboard-widgets/badge)](https://securityscorecards.dev/viewer/?uri=github.com/konradmichalik/typo3-solr-dashboard-widgets)
 [![License](https://poser.pugx.org/konradmichalik/typo3-solr-dashboard-widgets/license)](LICENSE.md)
 
 </div>
