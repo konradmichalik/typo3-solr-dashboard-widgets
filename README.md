@@ -5,7 +5,7 @@
 # TYPO3 extension `typo3_solr_dashboard_widgets`
 
 [![Latest Stable Version](https://typo3-badges.dev/badge/typo3_solr_dashboard_widgets/version/shields.svg)](https://extensions.typo3.org/extension/typo3_solr_dashboard_widgets)
-[![Supported TYPO3 versions](https://typo3-badges.dev/badge/typo3_solr_dashboard_widgets/typo3/shields.svg)](https://extensions.typo3.org/extension/typo3_solr_dashboard_widgets)
+![TYPO3](https://img.shields.io/badge/TYPO3-13.0%20%7C%2014.0-orange.svg)
 [![Supported PHP Versions](https://img.shields.io/packagist/dependency-v/konradmichalik/typo3-solr-dashboard-widgets/php?logo=php)](https://packagist.org/packages/konradmichalik/typo3-solr-dashboard-widgets)
 ![Stability](https://typo3-badges.dev/badge/typo3_solr_dashboard_widgets/stability/shields.svg)
 [![Coverage](https://img.shields.io/coverallsCoverage/github/konradmichalik/typo3-solr-dashboard-widgets?logo=coveralls)](https://coveralls.io/github/konradmichalik/typo3-solr-dashboard-widgets)
