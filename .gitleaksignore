@@ -1,0 +1,5 @@
+# Local, self-signed DDEV Traefik development certificate (regenerated per environment by
+# `ddev start`). Removed from the working tree and .gitignore'd in this change; this fingerprint
+# suppresses the finding for the historical commit that still carries it, so the full-history
+# gitleaks scan passes without rewriting the default branch history.
+6eab9a53cec487f28482cf075ca6484c085a2f4f:.ddev/traefik/certs/solr-dashboard-widgets.key:private-key:2
