@@ -17,6 +17,7 @@ use ApacheSolrForTypo3\Solr\ConnectionManager;
 use ApacheSolrForTypo3\Solr\Domain\Site\{Site, SiteRepository};
 use ApacheSolrForTypo3\Solr\System\Solr\SolrConnection;
 use KonradMichalik\SolrDashboardWidgets\DataProvider\SolrMetricsDataProvider;
+use KonradMichalik\Ttt\Assertion\JsonAssertions;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\{ResponseInterface, StreamInterface};
@@ -31,6 +32,8 @@ use TYPO3\CMS\Core\Http\RequestFactory;
  */
 final class SolrMetricsDataProviderTest extends TestCase
 {
+    use JsonAssertions;
+
     private SiteRepository&MockObject $siteRepository;
     private ConnectionManager&MockObject $connectionManager;
     private RequestFactory&MockObject $requestFactory;
@@ -218,9 +221,10 @@ final class SolrMetricsDataProviderTest extends TestCase
         $result = $this->subject->getCacheHitRates();
 
         self::assertTrue($result['reachable']);
+        self::assertJsonHasPaths($result, ['caches.0.hitRatio', 'caches.1.hitRatio', 'caches.2.hitRatio']);
         // Filter cache: uses cumulative (200/180 = 90%)
         self::assertEqualsWithDelta(90.0, $result['caches'][0]['hitRatio'], 0.01);
-        self::assertSame(200, $result['caches'][0]['lookups']);
+        self::assertJsonPath($result, 'caches.0.lookups', 200);
         // Query result cache: uses lookups/hits (100/90 = 90%)
         self::assertEqualsWithDelta(90.0, $result['caches'][1]['hitRatio'], 0.01);
         // Document cache: 0 lookups = 0% ratio
