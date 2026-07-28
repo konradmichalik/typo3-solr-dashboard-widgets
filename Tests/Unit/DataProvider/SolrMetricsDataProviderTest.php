@@ -87,7 +87,7 @@ final class SolrMetricsDataProviderTest extends TestCase
         self::assertTrue($result['reachable']);
         self::assertSame(256000000, $result['usedBytes']);
         self::assertSame(512000000, $result['maxBytes']);
-        self::assertEqualsWithDelta(50.0, $result['usedPercent'], 0.01);
+        self::assertJsonPathEqualsWithDelta($result, 'usedPercent', 50.0, 0.01);
     }
 
     public function testGetJvmMemoryReturnsNullWhenHeapKeysAreMissing(): void
@@ -117,7 +117,7 @@ final class SolrMetricsDataProviderTest extends TestCase
         $result = $this->subject->getJvmMemory();
 
         self::assertNotNull($result);
-        self::assertEqualsWithDelta(0.0, $result['usedPercent'], 0.01);
+        self::assertJsonPathEqualsWithDelta($result, 'usedPercent', 0.0, 0.01);
     }
 
     // --- getQueryPerformance ---
@@ -152,9 +152,9 @@ final class SolrMetricsDataProviderTest extends TestCase
 
         self::assertTrue($result['reachable']);
         self::assertSame(100, $result['totalCount']);
-        self::assertEqualsWithDelta(60.0, $result['perMinute'], 0.01);
-        self::assertEqualsWithDelta(10.0, $result['meanMs'], 0.01);
-        self::assertEqualsWithDelta(25.0, $result['p95Ms'], 0.01);
+        self::assertJsonPathEqualsWithDelta($result, 'perMinute', 60.0, 0.01);
+        self::assertJsonPathEqualsWithDelta($result, 'meanMs', 10.0, 0.01);
+        self::assertJsonPathEqualsWithDelta($result, 'p95Ms', 25.0, 0.01);
         self::assertCount(1, $result['perCore']);
     }
 
@@ -223,12 +223,12 @@ final class SolrMetricsDataProviderTest extends TestCase
         self::assertTrue($result['reachable']);
         self::assertJsonHasPaths($result, ['caches.0.hitRatio', 'caches.1.hitRatio', 'caches.2.hitRatio']);
         // Filter cache: uses cumulative (200/180 = 90%)
-        self::assertEqualsWithDelta(90.0, $result['caches'][0]['hitRatio'], 0.01);
+        self::assertJsonPathEqualsWithDelta($result, 'caches.0.hitRatio', 90.0, 0.01);
         self::assertJsonPath($result, 'caches.0.lookups', 200);
         // Query result cache: uses lookups/hits (100/90 = 90%)
-        self::assertEqualsWithDelta(90.0, $result['caches'][1]['hitRatio'], 0.01);
+        self::assertJsonPathEqualsWithDelta($result, 'caches.1.hitRatio', 90.0, 0.01);
         // Document cache: 0 lookups = 0% ratio
-        self::assertEqualsWithDelta(0.0, $result['caches'][2]['hitRatio'], 0.01);
+        self::assertJsonPathEqualsWithDelta($result, 'caches.2.hitRatio', 0.0, 0.01);
     }
 
     public function testGetCacheHitRatesMatchesSolrCloudCoreKeys(): void
@@ -247,7 +247,7 @@ final class SolrMetricsDataProviderTest extends TestCase
         $result = $this->subject->getCacheHitRates();
 
         self::assertTrue($result['reachable']);
-        self::assertEqualsWithDelta(80.0, $result['caches'][0]['hitRatio'], 0.01);
+        self::assertJsonPathEqualsWithDelta($result, 'caches.0.hitRatio', 80.0, 0.01);
     }
 
     // --- getSolrVersion ---
