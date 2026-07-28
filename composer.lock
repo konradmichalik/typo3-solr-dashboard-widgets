@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "27f6d90673468bdeb7425d06297f3576",
+    "content-hash": "a8323d76f94384f4525c77f0cf4024e5",
     "packages": [
         {
             "name": "apache-solr-for-typo3/solr",
@@ -6639,16 +6639,16 @@
         },
         {
             "name": "konradmichalik/ttt",
-            "version": "0.2.0",
+            "version": "0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/konradmichalik/ttt.git",
-                "reference": "7924d932009d8a20b9b4e12e67bf4baf28dd0057"
+                "reference": "ec82651b4389945ee17b4cfde5b1f728aee78202"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/konradmichalik/ttt/zipball/7924d932009d8a20b9b4e12e67bf4baf28dd0057",
-                "reference": "7924d932009d8a20b9b4e12e67bf4baf28dd0057",
+                "url": "https://api.github.com/repos/konradmichalik/ttt/zipball/ec82651b4389945ee17b4cfde5b1f728aee78202",
+                "reference": "ec82651b4389945ee17b4cfde5b1f728aee78202",
                 "shasum": ""
             },
             "require": {
@@ -6698,9 +6698,9 @@
             ],
             "support": {
                 "issues": "https://github.com/konradmichalik/ttt/issues",
-                "source": "https://github.com/konradmichalik/ttt/tree/0.2.0"
+                "source": "https://github.com/konradmichalik/ttt/tree/0.3.0"
             },
-            "time": "2026-07-27T11:34:34+00:00"
+            "time": "2026-07-28T06:32:33+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -9651,5 +9651,5 @@
         "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
