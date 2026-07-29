@@ -18,6 +18,7 @@ use ApacheSolrForTypo3\Solr\Domain\Site\{Site, SiteRepository};
 use ApacheSolrForTypo3\Solr\System\Solr\Service\SolrReadService;
 use ApacheSolrForTypo3\Solr\System\Solr\SolrConnection;
 use KonradMichalik\SolrDashboardWidgets\DataProvider\ConnectionStatusDataProvider;
+use KonradMichalik\Ttt\Assertion\JsonAssertions;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -30,6 +31,8 @@ use Solarium\Core\Client\Endpoint;
  */
 final class ConnectionStatusDataProviderTest extends TestCase
 {
+    use JsonAssertions;
+
     private SiteRepository&MockObject $siteRepository;
     private ConnectionManager&MockObject $connectionManager;
     private ConnectionStatusDataProvider $subject;
@@ -85,12 +88,12 @@ final class ConnectionStatusDataProviderTest extends TestCase
         $result = $this->subject->getConnections();
 
         self::assertCount(1, $result);
-        self::assertSame('My Site', $result[0]['siteLabel']);
+        self::assertJsonPath($result, '0.siteLabel', 'My Site');
         self::assertTrue($result[0]['reachable']);
         self::assertCount(1, $result[0]['cores']);
-        self::assertSame('localhost', $result[0]['cores'][0]['host']);
-        self::assertSame(8983, $result[0]['cores'][0]['port']);
-        self::assertSame('core_en', $result[0]['cores'][0]['core']);
+        self::assertJsonPath($result, '0.cores.0.host', 'localhost');
+        self::assertJsonPath($result, '0.cores.0.port', 8983);
+        self::assertJsonPath($result, '0.cores.0.core', 'core_en');
         self::assertTrue($result[0]['cores'][0]['reachable']);
     }
 
