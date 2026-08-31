@@ -33,7 +33,7 @@ final class IndexQueueErrorsWidget implements WidgetInterface, RequestAwareWidge
         private readonly WidgetConfigurationInterface $configuration,
         private readonly IndexQueueDataProvider $dataProvider,
         private readonly ViewFactoryInterface $viewFactory,
-        private readonly ?ButtonProviderInterface $buttonProvider = null,
+        private readonly ?ButtonProviderInterface $buttonProvider,
     ) {}
 
     public function setRequest(ServerRequestInterface $request): void

@@ -31,10 +31,11 @@ trait DashboardWidgetViewTrait
         WidgetConfigurationInterface $configuration,
     ): ViewInterface {
         $view = $viewFactory->create(new ViewFactoryData(
-            templateRootPaths: ['EXT:typo3_solr_dashboard_widgets/Resources/Private/Templates/'],
-            partialRootPaths: ['EXT:dashboard/Resources/Private/Partials/'],
-            layoutRootPaths: ['EXT:dashboard/Resources/Private/Layouts/'],
-            request: $request,
+            ['EXT:typo3_solr_dashboard_widgets/Resources/Private/Templates/'],
+            ['EXT:dashboard/Resources/Private/Partials/'],
+            ['EXT:dashboard/Resources/Private/Layouts/'],
+            null,
+            $request,
         ));
         $view->assign('button', $buttonProvider);
         $view->assign('configuration', $configuration);

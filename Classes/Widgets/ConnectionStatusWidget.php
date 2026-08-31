@@ -33,7 +33,7 @@ final class ConnectionStatusWidget implements WidgetInterface, RequestAwareWidge
         private readonly WidgetConfigurationInterface $configuration,
         private readonly ConnectionStatusDataProvider $dataProvider,
         private readonly ViewFactoryInterface $viewFactory,
-        private readonly ?ButtonProviderInterface $buttonProvider = null,
+        private readonly ?ButtonProviderInterface $buttonProvider,
     ) {}
 
     public function setRequest(ServerRequestInterface $request): void

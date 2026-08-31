@@ -36,7 +36,7 @@ final class SearchVolumeWidget implements WidgetInterface, JavaScriptInterface, 
         private readonly WidgetConfigurationInterface $configuration,
         private readonly SearchStatisticsDataProvider $dataProvider,
         private readonly ViewFactoryInterface $viewFactory,
-        private readonly ?ButtonProviderInterface $buttonProvider = null,
+        private readonly ?ButtonProviderInterface $buttonProvider,
     ) {}
 
     public function setRequest(ServerRequestInterface $request): void

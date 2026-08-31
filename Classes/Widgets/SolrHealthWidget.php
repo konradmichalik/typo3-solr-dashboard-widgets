@@ -37,7 +37,7 @@ final class SolrHealthWidget implements WidgetInterface, JavaScriptInterface, Re
         private readonly WidgetConfigurationInterface $configuration,
         private readonly SolrMetricsDataProvider $metricsProvider,
         private readonly ViewFactoryInterface $viewFactory,
-        private readonly ?ButtonProviderInterface $buttonProvider = null,
+        private readonly ?ButtonProviderInterface $buttonProvider,
     ) {}
 
     public function setRequest(ServerRequestInterface $request): void

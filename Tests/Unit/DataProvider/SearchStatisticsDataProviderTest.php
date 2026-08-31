@@ -84,7 +84,7 @@ final class SearchStatisticsDataProviderTest extends TestCase
             ['keywords' => 'solr', 'cnt' => 17],
         ];
 
-        $queryBuilder = $this->createConfiguredQueryBuilder($rows, totalCount: 100);
+        $queryBuilder = $this->createConfiguredQueryBuilder($rows, 100);
         $this->connectionPool
             ->method('getQueryBuilderForTable')
             ->willReturn($queryBuilder);
@@ -116,7 +116,7 @@ final class SearchStatisticsDataProviderTest extends TestCase
             ['keywords' => 'missingpage', 'cnt' => 3],
         ];
 
-        $queryBuilder = $this->createConfiguredQueryBuilder($rows, totalCount: 40);
+        $queryBuilder = $this->createConfiguredQueryBuilder($rows, 40);
         $this->connectionPool
             ->method('getQueryBuilderForTable')
             ->willReturn($queryBuilder);
