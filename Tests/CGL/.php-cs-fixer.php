@@ -41,6 +41,6 @@ return Config::create()
     ->withFinder(
         static fn (Finder $finder) => $finder
             ->in($rootPath)
-            ->notPath(['ext_emconf.php']),
+            ->notPath(['ext_emconf.php', '.ddev']),
     )
 ;
