@@ -42,7 +42,7 @@ final class SearchTermsWidget implements WidgetInterface, RequestAwareWidgetInte
         private readonly WidgetConfigurationInterface $configuration,
         private readonly SearchStatisticsDataProvider $dataProvider,
         private readonly ViewFactoryInterface $viewFactory,
-        private readonly ?ButtonProviderInterface $buttonProvider = null,
+        private readonly ?ButtonProviderInterface $buttonProvider,
     ) {}
 
     public function setRequest(ServerRequestInterface $request): void

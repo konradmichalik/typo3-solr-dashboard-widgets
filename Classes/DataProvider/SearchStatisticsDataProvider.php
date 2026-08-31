@@ -47,9 +47,9 @@ final readonly class SearchStatisticsDataProvider
     public function getTopSearchTerms(int $days = 30, int $limit = 10): array
     {
         $since = time() - ($days * 86400);
-        $rows = $this->fetchTerms($since, $limit, withHits: true);
+        $rows = $this->fetchTerms($since, $limit, true);
 
-        return $this->attachPercentages($rows, $this->countSearches($since, withHits: true));
+        return $this->attachPercentages($rows, $this->countSearches($since, true));
     }
 
     /**
@@ -58,9 +58,9 @@ final readonly class SearchStatisticsDataProvider
     public function getNoHitQueries(int $days = 30, int $limit = 5): array
     {
         $since = time() - ($days * 86400);
-        $rows = $this->fetchTerms($since, $limit, withHits: false);
+        $rows = $this->fetchTerms($since, $limit, false);
 
-        return $this->attachPercentages($rows, $this->countSearches($since, withHits: false));
+        return $this->attachPercentages($rows, $this->countSearches($since, false));
     }
 
     /**

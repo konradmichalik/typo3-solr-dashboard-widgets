@@ -52,7 +52,7 @@ final readonly class DocumentsInIndexDataProvider
             }
             $anyReachable = true;
             $total += (int) ($data['response']['numFound'] ?? 0);
-            $this->mergeTypeFacet($data['facet_counts']['facet_fields']['type'] ?? [], $perType);
+            $perType = $this->mergeTypeFacet($data['facet_counts']['facet_fields']['type'] ?? [], $perType);
         }
 
         arsort($perType);
@@ -117,9 +117,11 @@ final readonly class DocumentsInIndexDataProvider
      * Solr returns type facets as a flat [value, count, value, count, ...] array.
      *
      * @param array<mixed>       $facet
-     * @param array<string, int> &$perType accumulator keyed by type
+     * @param array<string, int> $perType accumulator keyed by type
+     *
+     * @return array<string, int>
      */
-    private function mergeTypeFacet(array $facet, array &$perType): void
+    private function mergeTypeFacet(array $facet, array $perType): array
     {
         for ($i = 0, $n = count($facet); $i + 1 < $n; $i += 2) {
             $type = (string) $facet[$i];
@@ -129,6 +131,8 @@ final readonly class DocumentsInIndexDataProvider
             }
             $perType[$type] = ($perType[$type] ?? 0) + $count;
         }
+
+        return $perType;
     }
 
     /**
