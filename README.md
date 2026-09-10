@@ -38,7 +38,7 @@ This extension adds a ready-to-use **Solr Overview** dashboard to the TYPO3 back
 
 * TYPO3 13.4 or 14.x
 * PHP 8.2+
-* [EXT:solr](https://extensions.typo3.org/extension/solr) ^13.0 or ^14.0-alpha
+* [EXT:solr](https://extensions.typo3.org/extension/solr) ^13.0 or ^14.0
 * `typo3/cms-dashboard`
 
 ### Composer
