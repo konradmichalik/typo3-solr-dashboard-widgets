@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cb799192563b3c98475035f43aef8c68",
+    "content-hash": "4fc70dbb933334c00289f6e142eb0b49",
     "packages": [
         {
             "name": "apache-solr-for-typo3/solr",
-            "version": "13.1.1",
+            "version": "13.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TYPO3-Solr/ext-solr.git",
-                "reference": "4dda1dd78503ffb63449a97f1dcb4b33ca6d6857"
+                "reference": "722363e5a62fa52c3bde1da402a7e483b331d5ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TYPO3-Solr/ext-solr/zipball/4dda1dd78503ffb63449a97f1dcb4b33ca6d6857",
-                "reference": "4dda1dd78503ffb63449a97f1dcb4b33ca6d6857",
+                "url": "https://api.github.com/repos/TYPO3-Solr/ext-solr/zipball/722363e5a62fa52c3bde1da402a7e483b331d5ed",
+                "reference": "722363e5a62fa52c3bde1da402a7e483b331d5ed",
                 "shasum": ""
             },
             "require": {
@@ -118,7 +118,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2026-01-21T11:09:36+00:00"
+            "time": "2026-08-25T07:40:57+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -9644,9 +9644,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "apache-solr-for-typo3/solr": 15
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
