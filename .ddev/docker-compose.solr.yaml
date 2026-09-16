@@ -1,6 +1,6 @@
 services:
   solr:
-    image: typo3solr/ext-solr:14.0.1
+    image: typo3solr/ext-solr:14.0.2
     container_name: ddev-${DDEV_SITENAME}-solr
     hostname: solr
     expose:
