@@ -50,7 +50,7 @@ ddev cgl analyze               # composer-dependency-analyser
 ddev cgl migration             # Rector
 ```
 
-`Tests/CGL/composer.json` replaces `typo3/cms-core` and `typo3/cms-extbase` and sets `"lock": false`. Anything PHPStan needs beyond that must be added to its `require-dev`.
+`Tests/CGL/composer.json` replaces `typo3/cms-core` and `typo3/cms-extbase`. Its `composer.lock` is committed and updated by Renovate, so tool releases only reach CI through a Renovate PR. Anything PHPStan needs beyond that must be added to its `require-dev`.
 
 ## Testing
 
