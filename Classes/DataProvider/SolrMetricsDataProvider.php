@@ -51,23 +51,10 @@ final class SolrMetricsDataProvider
     public function getJvmMemory(): ?array
     {
         foreach ($this->getUniqueHosts() as $solrBaseUri => $auth) {
-            $metrics = $this->fetchMetrics($solrBaseUri, $auth);
-            if (null === $metrics) {
-                continue;
+            $heap = $this->readHeap($this->fetchMetrics($solrBaseUri, $auth));
+            if (null !== $heap) {
+                return $heap;
             }
-            $jvm = $metrics['metrics']['solr.jvm'] ?? null;
-            if (!is_array($jvm) || !isset($jvm['memory.heap.used'], $jvm['memory.heap.max'])) {
-                continue;
-            }
-            $used = (int) $jvm['memory.heap.used'];
-            $max = (int) $jvm['memory.heap.max'];
-
-            return [
-                'reachable' => true,
-                'usedBytes' => $used,
-                'maxBytes' => $max,
-                'usedPercent' => $max > 0 ? ($used / $max) * 100.0 : 0.0,
-            ];
         }
 
         return null;
@@ -118,7 +105,7 @@ final class SolrMetricsDataProvider
             'reachable' => $anyReachable,
             'totalCount' => $totalCount,
             'perMinute' => $perMinute,
-            'meanMs' => $weightedMeanDenominator > 0 ? $weightedMeanNumerator / $weightedMeanDenominator : 0.0,
+            'meanMs' => $this->divide($weightedMeanNumerator, $weightedMeanDenominator),
             'p95Ms' => $maxP95,
             'perCore' => $perCore,
         ];
@@ -159,7 +146,7 @@ final class SolrMetricsDataProvider
                 'label' => $cache['label'],
                 'metric' => $cache['metric'],
                 'tooltip' => $cache['tooltip'],
-                'hitRatio' => $totalLookups > 0 ? ($totalHits / $totalLookups) * 100.0 : 0.0,
+                'hitRatio' => $this->divide($totalHits, $totalLookups) * 100.0,
                 'lookups' => $totalLookups,
                 'hits' => $totalHits,
             ];
@@ -196,15 +183,7 @@ final class SolrMetricsDataProvider
      */
     private function fetchSolrVersion(string $solrBaseUri, array $auth): ?string
     {
-        try {
-            $response = $this->requestFactory->request($solrBaseUri.'admin/info/system?wt=json', 'GET', $this->buildRequestOptions($auth));
-            if (200 !== $response->getStatusCode()) {
-                return null;
-            }
-            $data = json_decode((string) $response->getBody(), true, 512, \JSON_THROW_ON_ERROR);
-        } catch (Throwable) {
-            return null;
-        }
+        $data = $this->requestJson($solrBaseUri.'admin/info/system?wt=json', $auth);
 
         $version = (string) ($data['lucene']['solr-spec-version'] ?? $data['lucene']['solr-impl-version'] ?? '');
 
@@ -370,16 +349,53 @@ final class SolrMetricsDataProvider
 
         $url = $solrBaseUri.'admin/metrics?wt=json&group=jvm,core&prefix=memory.heap,QUERY./select.requestTimes,CACHE.searcher';
 
+        return $this->metricsCache[$solrBaseUri] = $this->requestJson($url, $auth);
+    }
+
+    /**
+     * @param array{username: ?string, password: ?string} $auth
+     *
+     * @return array<mixed>|null
+     */
+    private function requestJson(string $url, array $auth): ?array
+    {
         try {
             $response = $this->requestFactory->request($url, 'GET', $this->buildRequestOptions($auth));
             if (200 !== $response->getStatusCode()) {
-                return $this->metricsCache[$solrBaseUri] = null;
+                return null;
             }
             $data = json_decode((string) $response->getBody(), true, 512, \JSON_THROW_ON_ERROR);
         } catch (Throwable) {
-            return $this->metricsCache[$solrBaseUri] = null;
+            return null;
         }
 
-        return $this->metricsCache[$solrBaseUri] = is_array($data) ? $data : null;
+        return is_array($data) ? $data : null;
+    }
+
+    /**
+     * @param array<mixed>|null $metrics
+     *
+     * @return array{reachable: bool, usedBytes: int, maxBytes: int, usedPercent: float}|null
+     */
+    private function readHeap(?array $metrics): ?array
+    {
+        $jvm = $metrics['metrics']['solr.jvm'] ?? null;
+        if (!is_array($jvm) || !isset($jvm['memory.heap.used'], $jvm['memory.heap.max'])) {
+            return null;
+        }
+        $used = (int) $jvm['memory.heap.used'];
+        $max = (int) $jvm['memory.heap.max'];
+
+        return [
+            'reachable' => true,
+            'usedBytes' => $used,
+            'maxBytes' => $max,
+            'usedPercent' => $this->divide($used, $max) * 100.0,
+        ];
+    }
+
+    private function divide(float|int $numerator, float|int $denominator): float
+    {
+        return $denominator > 0 ? $numerator / $denominator : 0.0;
     }
 }
