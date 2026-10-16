@@ -59,6 +59,56 @@ final class ConnectionStatusDataProviderTest extends TestCase
         self::assertSame([], $result);
     }
 
+    public function testGetConnectionsSkipsSiteWhenConnectionLookupFails(): void
+    {
+        $site = $this->createMock(Site::class);
+
+        $this->siteRepository
+            ->method('getAvailableSites')
+            ->willReturn([$site]);
+
+        $this->connectionManager
+            ->method('getConnectionsBySite')
+            ->willThrowException(new RuntimeException('No Solr configuration'));
+
+        self::assertSame([], $this->subject->getConnections());
+    }
+
+    public function testGetConnectionsFallsBackToDefaultsForMissingEndpointValues(): void
+    {
+        $site = $this->createMock(Site::class);
+        $site->method('getLabel')->willReturn('My Site');
+
+        $node = $this->createMock(Endpoint::class);
+        $node->method('getHost')->willReturn(null);
+        $node->method('getPort')->willReturn(null);
+        $node->method('getCore')->willReturn(null);
+
+        $readService = $this->createMock(SolrReadService::class);
+        $readService->method('ping')->willReturn(false);
+
+        $connection = $this->createMock(SolrConnection::class);
+        $connection->method('getEndpoint')->with('read')->willReturn($node);
+        $connection->method('getReadService')->willReturn($readService);
+
+        $this->siteRepository
+            ->method('getAvailableSites')
+            ->willReturn([$site]);
+
+        $this->connectionManager
+            ->method('getConnectionsBySite')
+            ->willReturn([$connection]);
+
+        self::assertSame(
+            [[
+                'siteLabel' => 'My Site',
+                'reachable' => false,
+                'cores' => [['host' => '', 'port' => 0, 'core' => '', 'reachable' => false]],
+            ]],
+            $this->subject->getConnections(),
+        );
+    }
+
     public function testGetConnectionsReturnsCorrectDataForReachableCore(): void
     {
         $site = $this->createMock(Site::class);
