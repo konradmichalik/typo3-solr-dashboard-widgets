@@ -1,2 +1,13 @@
 parameters:
-	ignoreErrors: []
+	ignoreErrors:
+		-
+			message: '#^Cognitive complexity for "KonradMichalik\\SolrDashboardWidgets\\DataProvider\\ConnectionStatusDataProvider\:\:getConnections\(\)" is 11, keep it under 10$#'
+			identifier: complexity.functionLike
+			count: 1
+			path: ../../Classes/DataProvider/ConnectionStatusDataProvider.php
+
+		-
+			message: '#^Class cognitive complexity is 47, keep it under 40$#'
+			identifier: complexity.classLike
+			count: 1
+			path: ../../Classes/DataProvider/SolrMetricsDataProvider.php
