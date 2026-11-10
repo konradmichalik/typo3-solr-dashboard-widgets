@@ -15,6 +15,7 @@ namespace KonradMichalik\SolrDashboardWidgets\DataProvider;
 
 use ApacheSolrForTypo3\Solr\ConnectionManager;
 use ApacheSolrForTypo3\Solr\Domain\Site\SiteRepository;
+use ApacheSolrForTypo3\Solr\System\Solr\SolrConnection;
 use Throwable;
 
 /**
@@ -53,24 +54,9 @@ final readonly class ConnectionStatusDataProvider
             $siteReachable = false;
 
             foreach ($siteConnections as $connection) {
-                $endpoint = $connection->getEndpoint('read');
-                $reachable = false;
-
-                try {
-                    $reachable = $connection->getReadService()->ping();
-                } catch (Throwable) {
-                }
-
-                if ($reachable) {
-                    $siteReachable = true;
-                }
-
-                $cores[] = [
-                    'host' => $endpoint->getHost() ?? '',
-                    'port' => $endpoint->getPort() ?? 0,
-                    'core' => $endpoint->getCore() ?? '',
-                    'reachable' => $reachable,
-                ];
+                $core = $this->describeConnection($connection);
+                $siteReachable = $siteReachable || $core['reachable'];
+                $cores[] = $core;
             }
 
             $sites[] = [
@@ -81,5 +67,26 @@ final readonly class ConnectionStatusDataProvider
         }
 
         return $sites;
+    }
+
+    /**
+     * @return array{host: string, port: int, core: string, reachable: bool}
+     */
+    private function describeConnection(SolrConnection $connection): array
+    {
+        $endpoint = $connection->getEndpoint('read');
+        $reachable = false;
+
+        try {
+            $reachable = $connection->getReadService()->ping();
+        } catch (Throwable) {
+        }
+
+        return [
+            'host' => $endpoint->getHost() ?? '',
+            'port' => $endpoint->getPort() ?? 0,
+            'core' => $endpoint->getCore() ?? '',
+            'reachable' => $reachable,
+        ];
     }
 }
